@@ -43,6 +43,7 @@ packages = [
     "optiland.rays",
     "optiland.samples",
     "optiland.surfaces",
+    "optiland.thin_films",
     "optiland.tolerancing",
     "optiland.visualization"
 ]
