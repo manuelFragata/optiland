@@ -59,6 +59,7 @@ This learning guide breaks down Optiland into a series of tutorials that cover t
     examples/Tutorial_5a_Simple_Optimization
     examples/Tutorial_5b_Advanced_Optimization
     examples/Tutorial_5c_Optimization_Case_Study
+    examples/Tutorial_5d_User_Defined_Optimization
 
 
 6. Coatings & Polarization
@@ -109,3 +110,4 @@ This learning guide breaks down Optiland into a series of tutorials that cover t
 
     examples/Tutorial_10a_Custom_Surface_Types
     examples/Tutorial_10b_Custom_Coating_Types
+    examples/Tutorial_10c_Custom_Optimization_Algorithm

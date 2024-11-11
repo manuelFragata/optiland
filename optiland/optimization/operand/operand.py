@@ -94,14 +94,15 @@ class OperandRegistry:
     def __init__(self):
         self._registry = {}
 
-    def register(self, name, func):
+    def register(self, name, func, overwrite=False):
         """Register a function with a specified operand name.
 
         Args:
             name (str): The name of the operand.
             func (function): The function to be registered.
+            overwrite (bool): Whether to overwrite an existing registration.
         """
-        if name in self._registry:
+        if name in self._registry and not overwrite:
             raise ValueError(f'Operand "{name}" is already registered.')
         self._registry[name] = func
 
@@ -127,14 +128,6 @@ class OperandRegistry:
 
 # Create the global operand registry
 operand_registry = OperandRegistry()
-
-
-def register_operand(name):
-    """Decorator to register a function as an operand with the given name."""
-    def decorator(func):
-        operand_registry.register(name, func)
-        return func
-    return decorator
 
 
 # Add all operands to the registry

@@ -125,6 +125,8 @@ This guide gives a step-by-step approach to learning how to use Optiland.
         - Global optimization
     - [Tutorial 5c - Optimization Case Study](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_5c_Optimization_Case_Study.ipynb)
         - Complete process of designing a Cooke triplet
+    - [Tutorial 5d - User-defined Optimization Metrics](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_5d_User_Defined_Optimization.ipynb)
+        - Customized optimization
 6. **Coatings & Polarization**
     - [Tutorial 6a - Introduction to Coatings](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_6a_Introduction_to_Coatings.ipynb)
         - Simple coatings in Optiland
@@ -156,10 +158,10 @@ This guide gives a step-by-step approach to learning how to use Optiland.
 10. **Extending Optiland**
     - [Tutorial 10a - Custom Surface Types](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_10a_Custom_Surface_Types.ipynb)
         - Adding new surface types
-    - Tutorial 10b - Custom Coating Types - Update in progress (target completion: Nov. 2024)
+    - [Tutorial 10b - Custom Coating Types](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_10b_Custom_Coating_Types.ipynb)
         - Adding new coating types
-    - Tutorial 10c - Custom Optimization Algorithms - Update in progress (target completion: Nov. 2024)
-        - Adding new optimization approaches
+    - [Tutorial 10c - Custom Optimization Algorithms](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_10c_Custom_Optimization_Algorithm.ipynb)
+        - Creating a "random walk optimizer" to optimize an aspheric singlet
 11. **Machine Learning in Optical Design**
     - Tutorial 11a - Reinforcement Learning for Lens Design - Update in progress (target completion: Nov. 2024)
 
