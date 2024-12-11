@@ -8,6 +8,33 @@ from optiland.rays.ray_cache import RayCache
 from optiland.rays.ray_aiming import RayAimerFactory
 
 
+def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
+    pass
+
+
+def get_ray_origins_infinite(self, Hx, Hy, Px, Py, vx, vy):
+    pass
+
+
+def get_ray_starting_z_offset(optic):
+    """
+    Calculate the starting ray z-coordinate offset for systems with an
+    object at infinity. This is relative to the first surface of the optic.
+
+    This method chooses a starting point that is equivalent to the entrance
+    pupil diameter of the optic.
+
+    Args:
+        optic (Optic): The optical system.
+
+    Returns:
+        float: The z-coordinate offset relative to the first surface.
+    """
+    z = optic.surface_group.positions[1:-1]
+    offset = optic.paraxial.EPD()
+    return offset - np.min(z)
+
+
 class FieldCalculator(ABC):
 
     def __init__(self, optic):
@@ -100,21 +127,6 @@ class FieldCalculator(ABC):
 
         """
         pass  # pragma: no cover
-
-    def _get_starting_z_offset(self):
-        """
-        Calculate the starting ray z-coordinate offset for systems with an
-        object at infinity. This is relative to the first surface of the optic.
-
-        This method chooses a starting point that is equivalent to the entrance
-        pupil diameter of the optic.
-
-        Returns:
-            float: The z-coordinate offset relative to the first surface.
-        """
-        z = self.optic.surface_group.positions[1:-1]
-        offset = self.optic.paraxial.EPD()
-        return offset - np.min(z)
 
 
 class AngleFieldCalculator(FieldCalculator):
