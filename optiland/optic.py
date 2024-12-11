@@ -50,7 +50,7 @@ class Optic:
 
         self.paraxial = Paraxial(self)
         self.aberrations = Aberrations(self)
-        self.ray_generator = RayGenerator(self)
+        self.ray_generator = None
 
         self.polarization = 'ignore'
 
@@ -166,6 +166,9 @@ class Optic:
             field_type (str): The type of field.
         """
         self.field_type = field_type
+
+        # create a new ray generator with the updated field type
+        self.ray_generator = RayGenerator(self)
 
     def set_radius(self, value, surface_number):
         """
