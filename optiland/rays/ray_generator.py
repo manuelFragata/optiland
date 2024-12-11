@@ -32,7 +32,7 @@ def get_ray_starting_z_offset(optic, EPD=None):
     return offset - np.min(z)
 
 
-def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
+def get_ray_origins_finite(self, optic, field, pupil):
     """
     Get ray origin points for a finite object.
 
@@ -48,7 +48,21 @@ def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
         tuple: A tuple containing the x, y, and z coordinates of the
             ray starting position.
     """
-    pass
+    field_x, field_y = field
+    Px, Py = pupil
+
+    obj = optic.object_surface
+
+    # TODO: use object coordinate system
+    x = field_x
+    y = field_y
+    z = obj.geometry.sag(x, y) + obj.geometry.cs.z
+
+    x0 = np.full_like(Px, x)
+    y0 = np.full_like(Px, y)
+    z0 = np.full_like(Px, z)
+
+    return x0, y0, z0
 
 
 def get_ray_origins_infinite(self, optic, field, pupil, vx, vy):
@@ -208,7 +222,7 @@ class AngleFieldCalculator(FieldCalculator):
 
     def _get_ray_origins(self, Hx, Hy, Px, Py, vx, vy):
         """
-        Calculate the initial positions for rays originating at the object.
+        Calculate the initial positions for rays originating in object space.
 
         Args:
             Hx (float): Normalized x field coordinate.
@@ -228,35 +242,16 @@ class AngleFieldCalculator(FieldCalculator):
 
         """
         obj = self.optic.object_surface
-        max_field = self.optic.fields.max_field
-        field = (max_field * Hx, max_field * Hy)
-        pupil = (Px, Py)
-        if obj.is_infinite:
-            return get_ray_origins_infinite(self, field, pupil, vx, vy)
-        else:
-            return get_ray_origins_finite(self, field, pupil, vx, vy)
 
-        obj = self.optic.object_surface
         max_field = self.optic.fields.max_field
         field_x = max_field * Hx
         field_y = max_field * Hy
+        field = (field_x, field_y)
+        pupil = (Px, Py)
+
         if obj.is_infinite:
-            if self.optic.obj_space_telecentric:
-                raise ValueError('Object space cannot be telecentric for an '
-                                 'object at infinity.')
-            EPL = self.optic.paraxial.EPL()
-            EPD = self.optic.paraxial.EPD()
+            return get_ray_origins_infinite(self.optic, field, pupil, vx, vy)
 
-            offset = self._get_starting_z_offset()
-
-            # x, y, z positions of ray starting points
-            x = np.tan(np.radians(field_x)) * (offset + EPL)
-            y = -np.tan(np.radians(field_y)) * (offset + EPL)
-            z = self.optic.surface_group.positions[1] - offset
-
-            x0 = Px * EPD / 2 * vx + x
-            y0 = Py * EPD / 2 * vy + y
-            z0 = np.full_like(Px, z)
         else:
             EPL = self.optic.paraxial.EPL()
             z = self.optic.surface_group.positions[0]
@@ -267,7 +262,13 @@ class AngleFieldCalculator(FieldCalculator):
             y0 = np.full_like(Px, y)
             z0 = np.full_like(Px, z)
 
-        return x0, y0, z0
+            return x0, y0, z0
+
+    def _validate(self):
+        obj = self.optic.object_surface
+        if obj.is_infinite and self.optic.obj_space_telecentric:
+            raise ValueError('Object space cannot be telecentric for an '
+                             'object at infinity.')
 
 
 class ObjectHeightFieldCalculator(FieldCalculator):
@@ -291,21 +292,7 @@ class ObjectHeightFieldCalculator(FieldCalculator):
             tuple: A tuple containing the x, y, and z coordinates of the
                 object position.
         """
-        obj = self.optic.object_surface
-        max_field = self.optic.fields.max_field
-        field_x = max_field * Hx
-        field_y = max_field * Hy
-
-        # TODO: use object coordinate system
-        x = field_x
-        y = field_y
-        z = obj.geometry.sag(x, y) + obj.geometry.cs.z
-
-        x0 = np.full_like(Px, x)
-        y0 = np.full_like(Px, y)
-        z0 = np.full_like(Px, z)
-
-        return x0, y0, z0
+        pass
 
 
 class FieldCalculatorFactory:
