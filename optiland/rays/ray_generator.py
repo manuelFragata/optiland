@@ -106,6 +106,8 @@ class FieldCalculator(ABC):
         Returns:
             RealRays: RealRays object containing the generated rays.
         """
+        self._validate()
+
         vx, vy = 1 - np.array(self.optic.fields.get_vig_factor(Hx, Hy))
         x0, y0, z0 = self._get_ray_origins(Hx, Hy, Px, Py, vx, vy)
 
@@ -134,6 +136,32 @@ class FieldCalculator(ABC):
             z1 = np.full_like(Px, EPL)
 
         return self._build_ray_instance(x0, y0, z0, x1, y1, z1, wavelength)
+
+    @abstractmethod
+    def _get_ray_origins(self, Hx, Hy, Px, Py, vx, vy):
+        """
+        Calculate the initial positions for rays originating at the object.
+
+        Args:
+            Hx (float): Normalized x field coordinate.
+            Hy (float): Normalized y field coordinate.
+            Px (float or np.ndarray): x-coordinate of the pupil point.
+            Py (float or np.ndarray): y-coordinate of the pupil point.
+            vx (float): Vignetting factor in the x-direction.
+            vy (float): Vignetting factor in the y-direction.
+
+        Returns:
+            tuple: A tuple containing the x, y, and z coordinates of the
+                object position.
+        """
+        pass  # pragma: no cover
+
+    @abstractmethod
+    def _validate(self):
+        """
+        Validate the field calculator settings.
+        """
+        pass  # pragma: no cover
 
     def _build_ray_instance(self, x0, y0, z0, x1, y1, z1, wavelength):
         """
@@ -172,25 +200,6 @@ class FieldCalculator(ABC):
         else:
             return PolarizedRays(x0, y0, z0, L, M, N, intensity, wavelength)
 
-    @abstractmethod
-    def _get_ray_origins(self, Hx, Hy, Px, Py, vx, vy):
-        """
-        Calculate the initial positions for rays originating at the object.
-
-        Args:
-            Hx (float): Normalized x field coordinate.
-            Hy (float): Normalized y field coordinate.
-            Px (float or np.ndarray): x-coordinate of the pupil point.
-            Py (float or np.ndarray): y-coordinate of the pupil point.
-            vx (float): Vignetting factor in the x-direction.
-            vy (float): Vignetting factor in the y-direction.
-
-        Returns:
-            tuple: A tuple containing the x, y, and z coordinates of the
-                object position.
-        """
-        pass  # pragma: no cover
-
 
 class AngleFieldCalculator(FieldCalculator):
 
@@ -218,6 +227,15 @@ class AngleFieldCalculator(FieldCalculator):
                 infinity.
 
         """
+        obj = self.optic.object_surface
+        max_field = self.optic.fields.max_field
+        field = (max_field * Hx, max_field * Hy)
+        pupil = (Px, Py)
+        if obj.is_infinite:
+            return get_ray_origins_infinite(self, field, pupil, vx, vy)
+        else:
+            return get_ray_origins_finite(self, field, pupil, vx, vy)
+
         obj = self.optic.object_surface
         max_field = self.optic.fields.max_field
         field_x = max_field * Hx
