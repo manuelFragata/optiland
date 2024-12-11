@@ -9,11 +9,40 @@ from optiland.rays.ray_aiming import RayAimerFactory
 
 
 def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
+    """
+    Get ray origin points for a finite object.
+
+    Args:
+        Hx (float): Normalized x field coordinate.
+        Hy (float): Normalized y field coordinate.
+        Px (float or np.ndarray): x-coordinate of the pupil point.
+        Py (float or np.ndarray): y-coordinate of the pupil point.
+        vx (float): Vignetting factor in the x-direction.
+        vy (float): Vignetting factor in the y-direction.
+
+    Returns:
+        tuple: A tuple containing the x, y, and z coordinates of the
+            ray starting position.
+    """
     pass
 
 
 def get_ray_origins_infinite(self, Hx, Hy, Px, Py, vx, vy):
-    pass
+    """
+    Get ray origin points for an infinit object.
+
+    Args:
+        Hx (float): Normalized x field coordinate.
+        Hy (float): Normalized y field coordinate.
+        Px (float or np.ndarray): x-coordinate of the pupil point.
+        Py (float or np.ndarray): y-coordinate of the pupil point.
+        vx (float): Vignetting factor in the x-direction.
+        vy (float): Vignetting factor in the y-direction.
+
+    Returns:
+        tuple: A tuple containing the x, y, and z coordinates of the
+            ray starting position.
+    """
 
 
 def get_ray_starting_z_offset(optic):
@@ -136,11 +165,6 @@ class FieldCalculator(ABC):
         Returns:
             tuple: A tuple containing the x, y, and z coordinates of the
                 object position.
-
-        Raises:
-            ValueError: If the field type is "object_height" for an object at
-                infinity.
-
         """
         pass  # pragma: no cover
 
