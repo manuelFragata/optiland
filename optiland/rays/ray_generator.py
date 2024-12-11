@@ -84,6 +84,22 @@ class FieldCalculator(ABC):
         return self._build_ray_instance(x0, y0, z0, x1, y1, z1, wavelength)
 
     def _build_ray_instance(self, x0, y0, z0, x1, y1, z1, wavelength):
+        """
+        Build a RealRays or PolarizedRays instance based on a set of ray
+        starting and ending points, wavelength, and polarization setting.
+
+        Args:
+            x0 (float or np.ndarray): x-coordinate of the starting point.
+            y0 (float or np.ndarray): y-coordinate of the starting point.
+            z0 (float or np.ndarray): z-coordinate of the starting point.
+            x1 (float or np.ndarray): x-coordinate of the ending point.
+            y1 (float or np.ndarray): y-coordinate of the ending point.
+            z1 (float or np.ndarray): z-coordinate of the ending point.
+            wavelength (float): Wavelength of the rays.
+
+        Returns:
+            RealRays or PolarizedRays: The appropriate ray instance.
+        """
         mag = np.sqrt((x1 - x0)**2 + (y1 - y0)**2 + (z1 - z0)**2)
         L = (x1 - x0) / mag
         M = (y1 - y0) / mag
