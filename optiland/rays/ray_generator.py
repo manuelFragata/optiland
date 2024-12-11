@@ -234,7 +234,7 @@ class RayGenerator:
         self.aiming_type = None
         self.ray_aimer = None
         self.field_calculator = FieldCalculatorFactory.create(optic)
-        self.cache = RayCache()
+        self.cache = None
 
     def generate_rays(self, Hx, Hy, Px, Py, wavelength):
         if self.ray_aimer:
@@ -269,7 +269,12 @@ class RayGenerator:
 
     def set_ray_aiming(self, aiming_type):
         self.aiming_type = aiming_type
-        self.ray_aimer = RayAimerFactory.create(self.optic, aiming_type)
+        if aiming_type:
+            self.cache = RayCache()
+            self.ray_aimer = RayAimerFactory.create(self.optic, aiming_type)
+        else:
+            self.cache = None
+            self.ray_aimer = None
 
     def _generate_object_hash(self):
         # Serialize the system object
