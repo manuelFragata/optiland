@@ -8,6 +8,30 @@ from optiland.rays.ray_cache import RayCache
 from optiland.rays.ray_aiming import RayAimerFactory
 
 
+def get_ray_starting_z_offset(optic, EPD=None):
+    """
+    Calculate the starting ray z-coordinate offset for systems with an
+    object at infinity. This is relative to the first surface of the optic.
+
+    This method chooses a starting point that is equivalent to the entrance
+    pupil diameter of the optic.
+
+    Args:
+        optic (Optic): The optical system.
+        EPD (float): The entrance pupil diameter of the optic. If None, the
+            EPD is calculated from the paraxial data.
+
+    Returns:
+        float: The z-coordinate offset relative to the first surface.
+    """
+    z = optic.surface_group.positions[1:-1]
+    if EPD is None:
+        offset = optic.paraxial.EPD()
+    else:
+        offset = EPD
+    return offset - np.min(z)
+
+
 def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
     """
     Get ray origin points for a finite object.
@@ -27,15 +51,15 @@ def get_ray_origins_finite(self, Hx, Hy, Px, Py, vx, vy):
     pass
 
 
-def get_ray_origins_infinite(self, Hx, Hy, Px, Py, vx, vy):
+def get_ray_origins_infinite(self, optic, field, pupil, vx, vy):
     """
     Get ray origin points for an infinit object.
 
     Args:
-        Hx (float): Normalized x field coordinate.
-        Hy (float): Normalized y field coordinate.
-        Px (float or np.ndarray): x-coordinate of the pupil point.
-        Py (float or np.ndarray): y-coordinate of the pupil point.
+        optic (Optic): The optical system.
+        field (tuple): A tuple containing the normalized x and y field
+            coordinates.
+        pupil (tuple): A tuple containing the x and y pupil coordinates.
         vx (float): Vignetting factor in the x-direction.
         vy (float): Vignetting factor in the y-direction.
 
@@ -43,25 +67,24 @@ def get_ray_origins_infinite(self, Hx, Hy, Px, Py, vx, vy):
         tuple: A tuple containing the x, y, and z coordinates of the
             ray starting position.
     """
+    field_x, field_y = field
+    Px, Py = pupil
 
+    EPL = optic.paraxial.EPL()
+    EPD = optic.paraxial.EPD()
 
-def get_ray_starting_z_offset(optic):
-    """
-    Calculate the starting ray z-coordinate offset for systems with an
-    object at infinity. This is relative to the first surface of the optic.
+    offset = get_ray_starting_z_offset(optic, EPD)
 
-    This method chooses a starting point that is equivalent to the entrance
-    pupil diameter of the optic.
+    # x, y, z positions of ray starting points
+    x = np.tan(np.radians(field_x)) * (offset + EPL)
+    y = -np.tan(np.radians(field_y)) * (offset + EPL)
+    z = self.optic.surface_group.positions[1] - offset
 
-    Args:
-        optic (Optic): The optical system.
+    x0 = Px * EPD / 2 * vx + x
+    y0 = Py * EPD / 2 * vy + y
+    z0 = np.full_like(Px, z)
 
-    Returns:
-        float: The z-coordinate offset relative to the first surface.
-    """
-    z = optic.surface_group.positions[1:-1]
-    offset = optic.paraxial.EPD()
-    return offset - np.min(z)
+    return x0, y0, z0
 
 
 class FieldCalculator(ABC):
