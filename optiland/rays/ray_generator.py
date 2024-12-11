@@ -65,7 +65,7 @@ def get_ray_origins_finite(self, optic, field, pupil):
     return x0, y0, z0
 
 
-def get_ray_origins_infinite(self, optic, field, pupil, vx, vy):
+def get_ray_origins_infinite(optic, field, pupil, vx, vy):
     """
     Get ray origin points for an infinit object.
 
@@ -92,7 +92,7 @@ def get_ray_origins_infinite(self, optic, field, pupil, vx, vy):
     # x, y, z positions of ray starting points
     x = np.tan(np.radians(field_x)) * (offset + EPL)
     y = -np.tan(np.radians(field_y)) * (offset + EPL)
-    z = self.optic.surface_group.positions[1] - offset
+    z = optic.surface_group.positions[1] - offset
 
     x0 = Px * EPD / 2 * vx + x
     y0 = Py * EPD / 2 * vy + y
@@ -126,17 +126,15 @@ class FieldCalculator(ABC):
         x0, y0, z0 = self._get_ray_origins(Hx, Hy, Px, Py, vx, vy)
 
         if self.optic.obj_space_telecentric:
-            if self.optic.field_type == 'angle':
-                raise ValueError('Field type cannot be "angle" for telecentric'
-                                 ' object space.')
-            if self.optic.aperture.ap_type == 'EPD':
-                raise ValueError('Aperture type cannot be "EPD" for '
-                                 'telecentric object space.')
-            elif self.optic.aperture.ap_type == 'imageFNO':
-                raise ValueError('Aperture type cannot be "imageFNO" for '
-                                 'telecentric object space.')
+            ap_type = self.optic.aperture.ap_type
 
-            sin = self.optic.aperture.value
+            if ap_type == 'objectNA':
+                sin = self.optic.aperture.value
+            elif ap_type == 'object_cone_angle':
+                sin = np.sin(np.radians(self.optic.aperture.value))
+            else:
+                raise ValueError('Invalid aperture type: {}'.format(ap_type))
+
             z = np.sqrt(1 - sin**2) / sin + z0
             z1 = np.full_like(Px, z)
             x1 = Px * vx + x0
@@ -265,10 +263,9 @@ class AngleFieldCalculator(FieldCalculator):
             return x0, y0, z0
 
     def _validate(self):
-        obj = self.optic.object_surface
-        if obj.is_infinite and self.optic.obj_space_telecentric:
-            raise ValueError('Object space cannot be telecentric for an '
-                             'object at infinity.')
+        if self.optic.obj_space_telecentric:
+            raise ValueError('Object space cannot be telecentric for a '
+                             'field type of "angle".')
 
 
 class ObjectHeightFieldCalculator(FieldCalculator):
@@ -293,6 +290,20 @@ class ObjectHeightFieldCalculator(FieldCalculator):
                 object position.
         """
         pass
+
+    def _validate(self):
+        # Check if the object space is infinite
+        infinite = self.optic.object_surface.is_infinite
+        if infinite:
+            raise ValueError('Object space cannot be infinite for a '
+                             'field type of "object_height".')
+
+        # Object space cannot be telecentric for EPD or imageFNO apertures
+        telecentric = self.optic.obj_space_telecentric
+        ap_type = self.optic.aperture.ap_type
+        if telecentric and ap_type in ['EPD', 'imageFNO']:
+            raise ValueError(f'Aperture type cannot be "{ap_type}" for'
+                             ' telecentric object space.')
 
 
 class FieldCalculatorFactory:
