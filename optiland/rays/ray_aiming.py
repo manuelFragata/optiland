@@ -4,7 +4,7 @@ from abc import ABC
 class RayAimer(ABC):
 
     def __init__(self, optic):
-        self.optic = optic
+        raise NotImplementedError
 
 
 class BisectionRayAimer(RayAimer):
