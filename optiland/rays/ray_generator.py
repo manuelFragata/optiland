@@ -32,7 +32,7 @@ def get_ray_starting_z_offset(optic, EPD=None):
     return offset - np.min(z)
 
 
-def get_ray_origins_finite(self, optic, field, pupil):
+def get_ray_origins_finite(optic, field, pupil):
     """
     Get ray origin points for a finite object.
 
