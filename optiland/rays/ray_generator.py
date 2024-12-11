@@ -289,7 +289,10 @@ class ObjectHeightFieldCalculator(FieldCalculator):
             tuple: A tuple containing the x, y, and z coordinates of the
                 object position.
         """
-        pass
+        max_field = self.optic.fields.max_field
+        field_x = max_field * Hx
+        field_y = max_field * Hy
+        return get_ray_origins_finite(self.optic, (field_x, field_y), (Px, Py))
 
     def _validate(self):
         # Check if the object space is infinite
