@@ -133,7 +133,8 @@ class FieldCalculator(ABC):
             elif ap_type == 'object_cone_angle':
                 sin = np.sin(np.radians(self.optic.aperture.value))
             else:
-                raise ValueError('Invalid aperture type: {}'.format(ap_type))
+                raise ValueError(f'Aperture type {ap_type} may not be used '
+                                 'with telecentric object space.')
 
             z = np.sqrt(1 - sin**2) / sin + z0
             z1 = np.full_like(Px, z)
