@@ -234,11 +234,6 @@ class AngleFieldCalculator(FieldCalculator):
         Returns:
             tuple: A tuple containing the x, y, and z coordinates of the
                 object position.
-
-        Raises:
-            ValueError: If the field type is "object_height" for an object at
-                infinity.
-
         """
         obj = self.optic.object_surface
 
@@ -310,6 +305,74 @@ class ObjectHeightFieldCalculator(FieldCalculator):
                              ' telecentric object space.')
 
 
+class ParaxialImageHeightFieldCalculator(FieldCalculator):
+
+    def __init__(self, optic):
+        super().__init__(optic)
+
+    def _get_ray_origins(self, Hx, Hy, Px, Py, vx, vy):
+        """
+        Calculate the initial positions for rays originating at the object.
+
+        Args:
+            Hx (float): Normalized x field coordinate.
+            Hy (float): Normalized y field coordinate.
+            Px (float or np.ndarray): x-coordinate of the pupil point.
+            Py (float or np.ndarray): y-coordinate of the pupil point.
+            vx (float): Vignetting factor in the x-direction.
+            vy (float): Vignetting factor in the y-direction.
+
+        Returns:
+            tuple: A tuple containing the x, y, and z coordinates of the
+                object position.
+        """
+        y_img, H_img = self._generate_mapping()
+        Hx = np.interp(Hx, H_img, y_img)
+        Hy = np.interp(Hy, H_img, y_img)
+
+        obj = self.optic.object_surface
+
+        max_field = self.optic.fields.max_field
+        field_x = max_field * Hx
+        field_y = max_field * Hy
+        field = (field_x, field_y)
+        pupil = (Px, Py)
+
+        if obj.is_infinite:
+            return get_ray_origins_infinite(self.optic, field, pupil, vx, vy)
+
+        else:
+            EPL = self.optic.paraxial.EPL()
+            z = self.optic.surface_group.positions[0]
+            x = np.tan(np.radians(field_x)) * (EPL - z)
+            y = -np.tan(np.radians(field_y)) * (EPL - z)
+
+            x0 = np.full_like(Px, x)
+            y0 = np.full_like(Px, y)
+            z0 = np.full_like(Px, z)
+
+            return x0, y0, z0
+
+    def _validate(self):
+        pass
+
+    def _generate_mapping(self):
+        """
+        Generate a mapping between field coordinates and paraxial image height.
+
+        Returns:
+            tuple: A tuple containing paraxial image height and field
+                coordinates
+        """
+        num = 32
+        Hy = np.linspace(0, 1, num)
+        Py = np.zeros(num)
+        wavelength = self.optic.primary_wavelength
+
+        rays = self.optic.paraxial.trace(Hy, Py, wavelength)
+        return rays.y, Hy
+
+
 class FieldCalculatorFactory:
 
     @staticmethod
@@ -318,6 +381,8 @@ class FieldCalculatorFactory:
             return AngleFieldCalculator(optic)
         elif optic.field_type == 'object_height':
             return ObjectHeightFieldCalculator(optic)
+        elif optic.field_type == 'paraxial_image_height':
+            return ParaxialImageHeightFieldCalculator(optic)
         else:
             raise ValueError('Invalid field type: {}'.format(optic.field_type))
 
