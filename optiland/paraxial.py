@@ -358,7 +358,7 @@ class Paraxial:
         u0 = (y1 - y0) / (EPL - z0)
         rays = ParaxialRays(y0, u0, z0, wavelength)
 
-        self.optic.surface_group.trace(rays)
+        return self.optic.surface_group.trace(rays)
 
     def _trace_generic(self, y, u, z, wavelength, reverse=False, skip=0):
         """
