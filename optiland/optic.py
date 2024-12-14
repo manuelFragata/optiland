@@ -1,7 +1,12 @@
-"""Optiland Optic Module
+"""Optic Module
 
 This is the core module of Optiland, which provides the class to define
-optical systems.
+generic optical systems. The Optic class encapsulates the core properties
+of an optical system, such as the aperture, fields, surfaces, and
+wavelengths. It also provides methods to draw the optical system, trace rays,
+and perform paraxial and aberration analyses. Instances of the Optic class
+are used as arguments to various analysis, optimization, and visualization
+functions in Optiland.
 
 Kramer Harrison, 2024
 """
@@ -165,6 +170,9 @@ class Optic:
         Args:
             field_type (str): The type of field.
         """
+        if field_type not in ['angle', 'object_height']:
+            raise ValueError('Invalid field type. Must be "angle" '
+                             'or "object_height".')
         self.field_type = field_type
 
         # create a new ray generator with the updated field type
@@ -401,7 +409,7 @@ class Optic:
         """Update the image position such that the marginal ray crosses the
         optical axis at the image location."""
         ya, ua = self.paraxial.marginal_ray()
-        offset = float(ya[-1] / ua[-1])
+        offset = float(ya[-1, 0] / ua[-1, 0])
         self.surface_group.surfaces[-1].geometry.cs.z -= offset
 
     def trace(self, Hx, Hy, wavelength, num_rays=100,

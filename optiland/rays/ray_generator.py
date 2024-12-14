@@ -1,3 +1,11 @@
+"""Ray Generator
+
+This module contains the RayGenerator class, which is used to generate rays
+for tracing through an optical system.
+
+Kramer Harrison, 2024
+"""
+
 from abc import ABC, abstractmethod
 import pickle
 import hashlib
