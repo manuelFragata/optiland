@@ -50,9 +50,9 @@ class BaseRays:
                 scalar or a NumPy array).
         """
         if isinstance(data, (int, float)):
-            return be.array([data], dtype=float)
+            return be.array([data])
         elif isinstance(data, list):
-            return be.array(data, dtype=float)
+            return be.array(data)
         elif isinstance(data, np.ndarray):
             return be.array(data.ravel())
         elif isinstance(data, torch.Tensor):
