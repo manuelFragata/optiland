@@ -53,7 +53,9 @@ class BaseRays:
             return be.array([data], dtype=float)
         elif isinstance(data, list):
             return be.array(data, dtype=float)
-        elif isinstance(data, (np.ndarray, torch.Tensor)):
+        elif isinstance(data, np.ndarray):
+            return be.array(data.ravel())
+        elif isinstance(data, torch.Tensor):
             return be.ravel(data)
         else:
             raise ValueError('Unsupported input type. Must be a scalar, '
