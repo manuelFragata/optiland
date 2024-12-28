@@ -6,7 +6,7 @@ always defined in the local coordinate system of the geometry.
 
 Kramer Harrison, 2024
 """
-import numpy as np
+import optiland.backend as be
 from optiland.geometries.base import BaseGeometry
 from optiland.coordinate_system import CoordinateSystem
 
@@ -20,7 +20,7 @@ class Plane(BaseGeometry):
 
     def __init__(self, coordinate_system):
         super().__init__(coordinate_system)
-        self.radius = np.inf
+        self.radius = be.inf
         self.is_symmetric = True
 
     def sag(self, x=0, y=0):
@@ -36,8 +36,8 @@ class Plane(BaseGeometry):
             Union[float, np.ndarray]: The surface sag of the plane at the
                 given point.
         """
-        if isinstance(y, np.ndarray):
-            return np.zeros_like(y)
+        if isinstance(y, be.ndarray):
+            return be.zeros_like(y)
         return 0
 
     def distance(self, rays):
@@ -53,7 +53,7 @@ class Plane(BaseGeometry):
         t = -rays.z / rays.N
 
         # if rays do not hit plane, set to NaN
-        t[t < 0] = np.nan
+        t[t < 0] = be.nan
 
         return t
 
@@ -77,7 +77,7 @@ class Plane(BaseGeometry):
         """
         geometry_dict = super().to_dict()
         geometry_dict.update({
-            'radius': np.inf,
+            'radius': be.inf,
         })
         return geometry_dict
 
