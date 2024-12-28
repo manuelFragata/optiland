@@ -62,6 +62,10 @@ def from_euler(euler):
     return R.from_euler('xyz', euler)
 
 
+def ravel(x):
+    return _current_backend.ravel(x)
+
+
 def sqrt(x):
     return _current_backend.sqrt(x)
 
