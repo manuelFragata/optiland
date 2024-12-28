@@ -1,3 +1,11 @@
+"""Backend Module
+
+This module provides a unified interface for performing numerical operations
+using either NumPy or PyTorch as the backend. The default backend is NumPy,
+but it can be switched to PyTorch using the `set_backend` function.
+
+Kramer Harrison, 2024
+"""
 import numpy as np
 import torch
 from scipy.spatial.transform import Rotation as R

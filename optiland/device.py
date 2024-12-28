@@ -1,3 +1,15 @@
+"""Device Module
+
+This module provides functionality to set and get the global device for
+PyTorch operations. It allows switching between 'cpu' and 'cuda' devices based
+on availability and user preference.
+
+Functions:
+    set_device(device_name: str)
+    get_device()
+
+Kramer Harrison, 2024
+"""
 import torch
 
 
