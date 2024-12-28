@@ -8,8 +8,7 @@ system.
 
 Kramer Harrison, 2024
 """
-import numpy as np
-from scipy.spatial.transform import Rotation as R
+import optiland.backend as be
 from optiland.rays import RealRays
 
 
@@ -40,13 +39,13 @@ class CoordinateSystem:
     def __init__(self, x: float = 0, y: float = 0, z: float = 0,
                  rx: float = 0, ry: float = 0, rz: float = 0,
                  reference_cs: 'CoordinateSystem' = None):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = be.array(x)
+        self.y = be.array(y)
+        self.z = be.array(z)
 
-        self.rx = rx
-        self.ry = ry
-        self.rz = rz
+        self.rx = be.array(rx)
+        self.ry = be.array(ry)
+        self.rz = be.array(rz)
 
         self.reference_cs = reference_cs
 
@@ -108,8 +107,8 @@ class CoordinateSystem:
         Returns:
             np.ndarray: The rotation matrix of the coordinate system.
         """
-        rotation = np.array([self.rx, self.ry, self.rz])
-        return R.from_euler('xyz', rotation).as_matrix()
+        rotation = be.array([self.rx, self.ry, self.rz])
+        return be.from_euler(rotation).as_matrix()
 
     def get_effective_transform(self):
         """Get the effective translation and rotation matrix of the CS
@@ -117,7 +116,7 @@ class CoordinateSystem:
         Returns:
             tuple: The effective translation and rotation matrix
         """
-        translation = np.array([self.x, self.y, self.z])
+        translation = be.array([self.x, self.y, self.z])
         if self.reference_cs is None:
             # No reference coordinate system, return the local transform
             return translation, self.get_rotation_matrix()
@@ -143,7 +142,7 @@ class CoordinateSystem:
         """
         _, eff_rot_mat = self.get_effective_transform()
         # Convert the effective rotation matrix back to Euler angles
-        return R.from_matrix(eff_rot_mat).as_euler('xyz')
+        return be.from_matrix(eff_rot_mat).as_euler('xyz')
 
     def to_dict(self):
         """
