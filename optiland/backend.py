@@ -33,7 +33,7 @@ def array(x):
     """Create an array/tensor."""
     if _current_backend == torch:
         return torch.tensor(x, device=get_device(), dtype=torch.float32)
-    return np.asarray(x)
+    return np.asarray(x, dtype=float)
 
 
 def zeros(shape):
@@ -102,3 +102,9 @@ def exp(x):
 
 def mean(x):
     return _current_backend.mean(x)
+
+
+def copy(x):
+    if _current_backend == torch:
+        return x.clone()
+    return x.copy()
