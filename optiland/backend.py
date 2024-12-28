@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from scipy.spatial.transform import Rotation as R
 from optiland.device import get_device
 
 
@@ -25,6 +26,32 @@ def array(x):
     if _current_backend == torch:
         return torch.tensor(x, device=get_device(), dtype=torch.float32)
     return np.asarray(x)
+
+
+def zeros(shape):
+    """Create an array/tensor filled with zeros."""
+    if _current_backend == torch:
+        return torch.zeros(shape, device=get_device(), dtype=torch.float32)
+    return np.zeros(shape)
+
+
+def ones(shape):
+    """Create an array/tensor filled with ones."""
+    if _current_backend == torch:
+        return torch.ones(shape, device=get_device(), dtype=torch.float32)
+    return np.ones(shape)
+
+
+def from_matrix(matrix):
+    if _current_backend == torch:
+        raise NotImplementedError('from_matrix is not implemented for torch.')
+    return R.from_matrix(matrix)
+
+
+def from_euler(euler):
+    if _current_backend == torch:
+        raise NotImplementedError('from_euler is not implemented for torch.')
+    return R.from_euler('xyz', euler)
 
 
 def sqrt(x):
