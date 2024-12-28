@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from optiland.device import get_device
 
 
 _backends = {'numpy': np, 'torch': torch}
@@ -19,11 +20,11 @@ def get_backend():
 
 
 # Functions for common operations
-def array(x, **kwargs):
+def array(x):
     """Create an array/tensor."""
     if _current_backend == torch:
-        return torch.tensor(x, **kwargs)
-    return np.asarray(x, **kwargs)
+        return torch.tensor(x, device=get_device(), dtype=torch.float32)
+    return np.asarray(x)
 
 
 def sqrt(x):
