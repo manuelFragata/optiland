@@ -149,7 +149,7 @@ class RealRays(BaseRays):
         self.M -= 2 * dot * ny
         self.N -= 2 * dot * nz
 
-    def update(self, jones_matrix):
+    def update(self, jones_matrix=None):
         """Update ray properties (primarily used for polarization)."""
         pass
 
