@@ -76,6 +76,10 @@ def from_euler(euler):
     return R.from_euler('xyz', euler)
 
 
+def pi():
+    return _current_backend.pi
+
+
 def ravel(x):
     return _current_backend.ravel(x)
 
