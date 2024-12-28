@@ -64,6 +64,16 @@ def ones_like(x):
     return np.ones_like(x)
 
 
+def full_like(x, fill_value):
+    """
+    Create an array/tensor filled with fill_value with the same shape as x.
+    """
+    if _current_backend == torch:
+        return torch.full_like(x, fill_value, device=get_device(),
+                               dtype=torch.float32)
+    return np.full_like(x, fill_value)
+
+
 def from_matrix(matrix):
     if _current_backend == torch:
         raise NotImplementedError('from_matrix is not implemented for torch.')
