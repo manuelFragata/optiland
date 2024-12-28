@@ -6,7 +6,7 @@ Kramer Harrison, 2024
 """
 
 import numpy as np
-import torch
+import optiland.backend as be
 
 
 class BaseRays:
@@ -49,13 +49,11 @@ class BaseRays:
                 scalar or a NumPy array).
         """
         if isinstance(data, (int, float)):
-            return np.array([data], dtype=float)
+            return be.array([data], dtype=float)
         elif isinstance(data, list):
-            return np.array(data, dtype=float)
+            return be.array(data, dtype=float)
         elif isinstance(data, np.ndarray):
-            return np.ravel(data).astype(float)
-        elif isinstance(data, torch.Tensor):
-            return data
+            return be.ravel(data).astype(float)
         else:
             raise ValueError('Unsupported input type. Must be a scalar, '
                              'a list, a Torch tensor, or a NumPy array.')
