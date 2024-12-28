@@ -90,6 +90,10 @@ def pi():
     return _current_backend.pi
 
 
+def inf():
+    return _current_backend.inf
+
+
 def ravel(x):
     return _current_backend.ravel(x)
 
