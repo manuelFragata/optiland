@@ -43,11 +43,25 @@ def zeros(shape):
     return np.zeros(shape)
 
 
+def zeros_like(x):
+    """Create an array/tensor filled with zeros with the same shape as x."""
+    if _current_backend == torch:
+        return torch.zeros_like(x, device=get_device(), dtype=torch.float32)
+    return np.zeros_like(x)
+
+
 def ones(shape):
     """Create an array/tensor filled with ones."""
     if _current_backend == torch:
         return torch.ones(shape, device=get_device(), dtype=torch.float32)
     return np.ones(shape)
+
+
+def ones_like(x):
+    """Create an array/tensor filled with ones with the same shape as x."""
+    if _current_backend == torch:
+        return torch.ones_like(x, device=get_device(), dtype=torch.float32)
+    return np.ones_like(x)
 
 
 def from_matrix(matrix):
