@@ -94,6 +94,10 @@ def inf():
     return _current_backend.inf
 
 
+def nan():
+    return _current_backend.nan
+
+
 def ravel(x):
     return _current_backend.ravel(x)
 
