@@ -108,3 +108,11 @@ def copy(x):
     if _current_backend == torch:
         return x.clone()
     return x.copy()
+
+
+def sign(x):
+    return _current_backend.sign(x)
+
+
+def abs(x):
+    return _current_backend.abs(x)
