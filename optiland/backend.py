@@ -28,6 +28,20 @@ def get_backend():
     return _current_backend
 
 
+def __getattr__(name):
+    """Dynamically forward attribute requests to the current backend.
+
+    This is used to access constants and functions from the current backend
+    without importing them explicitly. For example, `be.sin` will return
+    `np.sin` or `torch.sin` based on the current backend. Likewise, `be.pi`
+    will return `np.pi` or `torch.pi`.
+    """
+    if hasattr(_current_backend, name):
+        return getattr(_current_backend, name)
+    raise AttributeError(f'"{_current_backend.__name__}" backend has no '
+                         f'attribute "{name}"')
+
+
 # Functions for common operations
 def array(x):
     """Create an array/tensor."""
@@ -86,51 +100,7 @@ def from_euler(euler):
     return R.from_euler('xyz', euler)
 
 
-def pi():
-    return _current_backend.pi
-
-
-def inf():
-    return _current_backend.inf
-
-
-def nan():
-    return _current_backend.nan
-
-
-def ravel(x):
-    return _current_backend.ravel(x)
-
-
-def sqrt(x):
-    return _current_backend.sqrt(x)
-
-
-def sin(x):
-    return _current_backend.sin(x)
-
-
-def cos(x):
-    return _current_backend.cos(x)
-
-
-def exp(x):
-    return _current_backend.exp(x)
-
-
-def mean(x):
-    return _current_backend.mean(x)
-
-
 def copy(x):
     if _current_backend == torch:
         return x.clone()
     return x.copy()
-
-
-def sign(x):
-    return _current_backend.sign(x)
-
-
-def abs(x):
-    return _current_backend.abs(x)
