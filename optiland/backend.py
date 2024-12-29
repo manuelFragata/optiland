@@ -187,7 +187,7 @@ def interp(x, xp, fp):
 
 def atleast_2d(x):
     if _current_backend == torch:
-        x = torch.as_tensor(x)
+        x = torch.as_tensor(x, dtype=torch.float32)
         if x.ndim == 0:  # Scalar -> (1, 1)
             return x.unsqueeze(0).unsqueeze(0)
         elif x.ndim == 1:  # 1D array -> (1, N)
