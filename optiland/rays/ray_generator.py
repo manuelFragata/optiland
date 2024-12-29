@@ -37,7 +37,10 @@ class RayGenerator:
         Px = be.array(Px)
         Py = be.array(Py)
 
-        vx, vy = 1 - be.array(self.optic.fields.get_vig_factor(Hx, Hy))
+        vx, vy = self.optic.fields.get_vig_factor(Hx, Hy)
+        vx = 1 - vx
+        vy = 1 - vy
+
         x0, y0, z0 = self._get_ray_origins(Hx, Hy, Px, Py, vx, vy)
 
         if self.optic.obj_space_telecentric:
