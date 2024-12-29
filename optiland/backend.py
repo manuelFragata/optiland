@@ -160,9 +160,9 @@ def torch_interp(x, xp, fp):
         torch.Tensor: Interpolated values.
     """
     # Ensure tensors are float for arithmetic operations
-    x = torch.as_tensor(x, dtype=torch.float32)
-    xp = torch.as_tensor(xp, dtype=torch.float32)
-    fp = torch.as_tensor(fp, dtype=torch.float32)
+    x = torch.as_tensor(x, dtype=torch.float32, device=get_device())
+    xp = torch.as_tensor(xp, dtype=torch.float32, device=get_device())
+    fp = torch.as_tensor(fp, dtype=torch.float32, device=get_device())
 
     # Sort xp and fp based on xp
     sorted_indices = torch.argsort(xp)
