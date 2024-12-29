@@ -7,6 +7,7 @@ Kramer Harrison, 2024
 from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 from optiland.analysis.spot_diagram import SpotDiagram
 
 
@@ -121,4 +122,9 @@ class EncircledEnergy(SpotDiagram):
         x = self.optic.surface_group.x[-1, :]
         y = self.optic.surface_group.y[-1, :]
         intensity = self.optic.surface_group.intensity[-1, :]
+
+        x = be.to_numpy(x)
+        y = be.to_numpy(y)
+        intensity = be.to_numpy(intensity)
+
         return [x, y, intensity]
