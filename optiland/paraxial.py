@@ -403,6 +403,6 @@ class Paraxial:
             np.ndarray: The processed input.
         """
         if isinstance(x, (int, float)):
-            return be.array([x], dtype=float)
+            return be.array([x])
         else:
-            return be.array(x, dtype=float)
+            return be.array(x)
