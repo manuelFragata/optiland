@@ -6,7 +6,7 @@ wavelengths.
 
 Kramer Harrison, 2024
 """
-
+import optiland.backend as be
 from optiland.materials.base import BaseMaterial
 
 
@@ -21,8 +21,8 @@ class IdealMaterial(BaseMaterial):
     """
 
     def __init__(self, n, k=0):
-        self.index = n
-        self.absorp = k
+        self.index = be.array(n)
+        self.absorp = be.array(k)
 
     def n(self, wavelength):
         """
