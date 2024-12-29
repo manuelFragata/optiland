@@ -140,6 +140,9 @@ class FieldGroup:
             NotImplementedError: If the system is not rotationally-symmetric.
         """
         if be.all(self.x_fields == 0):  # assume rotationally symmetric
+            Hy = be.array(Hx)
+            Hy = be.array(Hy)
+
             idx_sorted = be.argsort(self.y_fields)
             if self.max_y_field == 0:
                 h_sorted = be.zeros(self.num_fields)
