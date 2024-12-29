@@ -43,49 +43,56 @@ class SurfaceGroup:
     @property
     def x(self):
         """np.array: x intersection points on all surfaces"""
-        return be.array([surf.x for surf in self.surfaces if surf.x.size > 0])
+        return be.array([surf.x for surf in self.surfaces
+                         if be.size(surf.x) > 0])
 
     @property
     def y(self):
         """np.array: y intersection points on all surfaces"""
-        return be.array([surf.y for surf in self.surfaces if surf.y.size > 0])
+        return be.array([surf.y for surf in self.surfaces
+                         if be.size(surf.y) > 0])
 
     @property
     def z(self):
         """np.array: z intersection points on all surfaces"""
-        return be.array([surf.z for surf in self.surfaces if surf.z.size > 0])
+        return be.array([surf.z for surf in self.surfaces
+                         if be.size(surf.z) > 0])
 
     @property
     def L(self):
         """np.array: x direction cosines on all surfaces"""
-        return be.array([surf.L for surf in self.surfaces if surf.L.size > 0])
+        return be.array([surf.L for surf in self.surfaces
+                         if be.size(surf.L) > 0])
 
     @property
     def M(self):
         """np.array: y direction cosines on all surfaces"""
-        return be.array([surf.M for surf in self.surfaces if surf.M.size > 0])
+        return be.array([surf.M for surf in self.surfaces
+                         if be.size(surf.M) > 0])
 
     @property
     def N(self):
         """np.array: z direction cosines on all surfaces"""
-        return be.array([surf.N for surf in self.surfaces if surf.N.size > 0])
+        return be.array([surf.N for surf in self.surfaces
+                         if be.size(surf.N) > 0])
 
     @property
     def opd(self):
         """np.array: optical path difference recorded on all surfaces"""
         return be.array([surf.opd for surf in self.surfaces
-                         if surf.opd.size > 0])
+                         if be.size(surf.opd) > 0])
 
     @property
     def u(self):
         """np.array: paraxial ray angles on all surfaces"""
-        return be.array([surf.u for surf in self.surfaces if surf.u.size > 0])
+        return be.array([surf.u for surf in self.surfaces
+                         if be.size(surf.u) > 0])
 
     @property
     def intensity(self):
         """np.array: ray intensities on all surfaces"""
         return be.array([surf.intensity for surf in self.surfaces
-                         if surf.intensity.size > 0])
+                         if be.size(surf.intensity) > 0])
 
     @property
     def positions(self):
