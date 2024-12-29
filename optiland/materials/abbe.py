@@ -8,7 +8,7 @@ coefficient is ignored in this model and is always set to zero.
 Kramer Harrison, 2024
 """
 import os
-import numpy as np
+import optiland.backend as be
 from optiland.materials.base import BaseMaterial
 
 
@@ -39,7 +39,7 @@ class AbbeMaterial(BaseMaterial):
         Returns:
             float: The refractive index of the material.
         """
-        return np.polyval(self._p, wavelength)
+        return be.polyval(self._p, wavelength)
 
     def k(self, wavelength):
         """
@@ -61,8 +61,8 @@ class AbbeMaterial(BaseMaterial):
             numpy.ndarray: The polynomial coefficients.
         """
         # Polynomial fit to the refractive index data
-        X = np.array([self.index, self.abbe])
-        X_poly = np.hstack([X**i for i in range(1, 4)])
+        X = be.array([self.index, self.abbe])
+        X_poly = be.hstack([X**i for i in range(1, 4)])
 
         # File contains fit coefficients
         coefficients_file = os.path.join(
@@ -70,7 +70,7 @@ class AbbeMaterial(BaseMaterial):
             '../../database/glass_model_coefficients.npy'
             )
 
-        coefficients = np.load(coefficients_file)
+        coefficients = be.load(coefficients_file)
         return X_poly @ coefficients
 
     def to_dict(self):
