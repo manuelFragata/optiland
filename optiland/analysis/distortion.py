@@ -6,6 +6,7 @@ Kramer Harrison, 2024
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 
 
 class Distortion:
@@ -52,7 +53,7 @@ class Distortion:
         _, ax = plt.subplots(figsize=figsize)
         ax.axvline(x=0, color='k', linewidth=1, linestyle='--')
 
-        field = np.linspace(1e-10, self.optic.fields.max_field,
+        field = np.linspace(1e-10, be.to_numpy(self.optic.fields.max_field),
                             self.num_points)
         for k, wavelength in enumerate(self.wavelengths):
             ax.plot(self.data[k], field, label=f'{wavelength:.4f} µm')
@@ -74,8 +75,8 @@ class Distortion:
         Returns:
             list: A list of distortion data points.
         """
-        Hx = np.zeros(self.num_points)
-        Hy = np.linspace(1e-10, 1, self.num_points)
+        Hx = be.zeros(self.num_points)
+        Hy = be.linspace(1e-10, 1, self.num_points)
 
         data = []
         for wavelength in self.wavelengths:
@@ -83,18 +84,18 @@ class Distortion:
                                      wavelength=wavelength)
             yr = self.optic.surface_group.y[-1, :]
 
-            const = yr[0] / (np.tan(1e-10 *
-                                    np.radians(self.optic.fields.max_field)))
+            const = yr[0] / (be.tan(1e-10 *
+                                    be.deg2rad(self.optic.fields.max_field)))
 
             if self.distortion_type == 'f-tan':
-                yp = const * np.tan(Hy *
-                                    np.radians(self.optic.fields.max_field))
+                yp = const * be.tan(Hy *
+                                    be.deg2rad(self.optic.fields.max_field))
             elif self.distortion_type == 'f-theta':
-                yp = const * Hy * np.radians(self.optic.fields.max_field)
+                yp = const * Hy * be.deg2rad(self.optic.fields.max_field)
             else:
                 raise ValueError('''Distortion type must be "f-tan" or
                                  "f-theta"''')
 
-            data.append(100 * (yr - yp) / yp)
+            data.append(be.to_numpy(100 * (yr - yp) / yp))
 
         return data
