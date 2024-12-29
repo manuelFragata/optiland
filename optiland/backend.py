@@ -98,6 +98,14 @@ def full_like(x, fill_value):
     return np.full_like(x, fill_value)
 
 
+def linspace(start, stop, num=50):
+    """Create an array/tensor of evenly spaced values."""
+    if _current_backend == torch:
+        return torch.linspace(start, stop, num, device=get_device(),
+                              dtype=torch.float32)
+    return np.linspace(start, stop, num)
+
+
 def to_numpy(array):
     """Converts the input array to a NumPy array, regardless of the backend."""
     if isinstance(array, np.ndarray):
