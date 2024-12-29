@@ -257,3 +257,9 @@ def random_uniform(low=0.0, high=1.0, size=None, generator=None):
                 low, high, generator=generator
             )
     return np.random.uniform(low, high, size)
+
+
+def repeat(x, repeats):
+    if _current_backend == torch:
+        return torch.repeat_interleave(x, repeats)
+    return np.repeat(x, repeats)
