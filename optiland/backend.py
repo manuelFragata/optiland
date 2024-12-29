@@ -232,3 +232,18 @@ def size(x):
     if _current_backend == torch:
         return torch.numel(x)
     return x.size
+
+
+def default_rng(seed=None):
+    if _current_backend == torch:
+        return torch.Generator(device=get_device()).manual_seed(seed)
+    return np.random.default_rng(seed)
+
+
+def random_uniform(low=0.0, high=1.0, size=None, generator=None):
+    if _current_backend == torch:
+        if generator is None:
+            return torch.empty(size).uniform_(low, high)
+        else:
+            return torch.empty(size, generator=generator).uniform_(low, high)
+    return np.random.uniform(low, high, size)
