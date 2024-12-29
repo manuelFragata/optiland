@@ -106,15 +106,15 @@ def linspace(start, stop, num=50):
     return np.linspace(start, stop, num)
 
 
-def to_numpy(array):
-    """Converts the input array to a NumPy array, regardless of the backend."""
-    if isinstance(array, np.ndarray):
-        return array
-    elif isinstance(array, torch.Tensor):
-        return array.cpu().numpy()
+def to_numpy(x):
+    """Converts input scalar or array to NumPy array, regardless of backend."""
+    if isinstance(x, (int, float, np.ndarray)):
+        return x
+    elif isinstance(x, torch.Tensor):
+        return x.cpu().numpy()
     else:
         raise TypeError(f'Unsupported type for conversion to '
-                        f'NumPy: {type(array)}')
+                        f'NumPy: {type(x)}')
 
 
 def from_matrix(matrix):
