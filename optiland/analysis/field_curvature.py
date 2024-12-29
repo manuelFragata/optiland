@@ -6,6 +6,7 @@ Kramer Harrison, 2024
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 
 
 class FieldCurvature:
@@ -48,7 +49,8 @@ class FieldCurvature:
         """
         fig, ax = plt.subplots(figsize=figsize)
 
-        field = np.linspace(0, self.optic.fields.max_field, self.num_points)
+        field = np.linspace(0, be.to_numpy(self.optic.fields.max_field),
+                            self.num_points)
 
         for k, wavelength in enumerate(self.wavelengths):
             ax.plot(self.data[k][0], field, f'C{k}', zorder=10,
@@ -59,7 +61,7 @@ class FieldCurvature:
         ax.set_xlabel('Image Plane Delta (mm)')
         ax.set_ylabel('Field')
 
-        ax.set_ylim([0, self.optic.fields.max_field])
+        ax.set_ylim([0, be.to_numpy(self.optic.fields.max_field)])
         current_xlim = plt.xlim()
         ax.set_xlim([-max(np.abs(current_xlim)), max(np.abs(current_xlim))])
         ax.set_title('Field Curvature')
@@ -82,11 +84,14 @@ class FieldCurvature:
             tangential = self._intersection_parabasal_tangential(wavelength)
             sagittal = self._intersection_parabasal_sagittal(wavelength)
 
+            tangential = be.to_numpy(tangential)
+            sagittal = be.to_numpy(sagittal)
+
             data.append([tangential, sagittal])
 
         return data
 
-    def _intersection_parabasal_tangential(self, wavelength, delta=1e-5):
+    def _intersection_parabasal_tangential(self, wavelength, delta=1e-1):
         """
         Calculate the intersection of parabasal rays in tangential plane.
 
@@ -98,11 +103,11 @@ class FieldCurvature:
         Returns:
             numpy.ndarray: The calculated intersection values.
         """
-        Hx = np.zeros(2 * self.num_points)
-        Hy = np.repeat(np.linspace(0, 1, self.num_points), 2)
+        Hx = be.zeros(2 * self.num_points)
+        Hy = be.repeat(be.linspace(0, 1, self.num_points), 2)
 
-        Px = np.zeros(2 * self.num_points)
-        Py = np.tile(np.array([-delta, delta]), self.num_points)
+        Px = be.zeros(2 * self.num_points)
+        Py = be.tile(be.array([-delta, delta]), (self.num_points,))
 
         self.optic.trace_generic(Hx, Hy, Px, Py, wavelength=wavelength)
 
@@ -122,7 +127,7 @@ class FieldCurvature:
 
         return t1 * N1
 
-    def _intersection_parabasal_sagittal(self, wavelength, delta=1e-5):
+    def _intersection_parabasal_sagittal(self, wavelength, delta=1e-1):
         """
         Calculate the intersection of parabasal rays in sagittal plane.
 
@@ -134,11 +139,11 @@ class FieldCurvature:
         Returns:
             numpy.ndarray: The calculated intersection values.
         """
-        Hx = np.zeros(2 * self.num_points)
-        Hy = np.repeat(np.linspace(0, 1, self.num_points), 2)
+        Hx = be.zeros(2 * self.num_points)
+        Hy = be.repeat(be.linspace(0, 1, self.num_points), 2)
 
-        Px = np.tile(np.array([-delta, delta]), self.num_points)
-        Py = np.zeros(2 * self.num_points)
+        Px = be.tile(be.array([-delta, delta]), (self.num_points,))
+        Py = be.zeros(2 * self.num_points)
 
         self.optic.trace_generic(Hx, Hy, Px, Py, wavelength=wavelength)
 
