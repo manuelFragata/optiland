@@ -6,7 +6,7 @@ properties of lens systems.
 Kramer Harrison, 2024
 """
 from optiland.rays import ParaxialRays
-import numpy as np
+import optiland.backend as be
 
 
 class Paraxial:
@@ -55,7 +55,7 @@ class Paraxial:
         wavelength = self.optic.primary_wavelength
         y, u = self._trace_generic(1.0, 0.0, z_start, wavelength)
         f2 = -y[0] / u[-1]
-        return np.abs(f2[0])
+        return be.abs(f2[0])
 
     def F1(self):
         """Calculate the front focal point location
@@ -161,9 +161,9 @@ class Paraxial:
             obj_z = self.optic.object_surface.geometry.cs.z
             wavelength = self.optic.primary_wavelength
             n0 = self.optic.object_surface.material_post.n(wavelength)
-            u0 = np.arcsin(ap_value / n0)
+            u0 = be.arcsin(ap_value / n0)
             z = self.EPL() - obj_z
-            return 2 * z * np.tan(u0)
+            return 2 * z * be.tan(u0)
 
     def XPL(self):
         """Calculate the exit pupil location
@@ -282,7 +282,7 @@ class Paraxial:
         if self.optic.field_type == 'object_height':
             u1 = 0.1 * max_field / y[-1]
         elif self.optic.field_type == 'angle':
-            u1 = 0.1 * np.tan(np.deg2rad(max_field)) / u[-1]
+            u1 = 0.1 * be.tan(be.deg2rad(max_field)) / u[-1]
 
         yn, un = self._trace_generic(y0, u1, z0, wavelength, reverse=True,
                                      skip=stop_index+1)
@@ -317,25 +317,25 @@ class Paraxial:
                 raise ValueError('Field type cannot be "object_height" for an '
                                  'object at infinity.')
 
-            y = -np.tan(np.radians(field_y)) * EPL
+            y = -be.tan(be.deg2rad(field_y)) * EPL
             z = self.optic.surface_group.positions[1]
 
             y0 = y1 + y
-            z0 = np.ones_like(y1) * z
+            z0 = be.ones_like(y1) * z
         else:
             if self.optic.field_type == 'object_height':
                 y = -field_y
                 z = obj.geometry.cs.z
 
-                y0 = np.ones_like(y1) * y
-                z0 = np.ones_like(y1) * z
+                y0 = be.ones_like(y1) * y
+                z0 = be.ones_like(y1) * z
 
             elif self.optic.field_type == 'angle':
-                y = -np.tan(np.radians(field_y))
+                y = -be.tan(be.deg2rad(field_y))
                 z = self.optic.surface_group.positions[0]
 
                 y0 = y1 + y
-                z0 = np.ones_like(y1) * z
+                z0 = be.ones_like(y1) * z
 
         return y0, z0
 
@@ -402,7 +402,7 @@ class Paraxial:
         Returns:
             np.ndarray: The processed input.
         """
-        if np.isscalar(x):
-            return np.array([x], dtype=float)
+        if isinstance(x, (int, float)):
+            return be.array([x], dtype=float)
         else:
-            return np.array(x, dtype=float)
+            return be.array(x, dtype=float)
