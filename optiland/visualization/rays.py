@@ -104,7 +104,9 @@ class Rays2D:
         r_extent_new = np.zeros_like(self.r_extent)
         for i, surf in enumerate(self.optic.surface_group.surfaces):
             # convert to local coordinate system
-            x, y, _ = transform(self.x[i], self.y[i], self.z[i],
+            x, y, _ = transform(np.copy(self.x[i]),
+                                np.copy(self.y[i]),
+                                np.copy(self.z[i]),
                                 surf, is_global=True)
 
             r_extent_new[i] = np.nanmax(np.hypot(x, y))
