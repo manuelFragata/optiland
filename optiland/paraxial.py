@@ -140,7 +140,10 @@ class Paraxial:
                                    skip=stop_index+1)
 
         loc_relative = y[-1] / u[-1]
-        return loc_relative[0]
+        try:
+            return loc_relative[0]
+        except IndexError:
+            return loc_relative
 
     def EPD(self):
         """Caculate the entrance pupil diameter
