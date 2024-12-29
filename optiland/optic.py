@@ -11,6 +11,8 @@ functions in Optiland.
 Kramer Harrison, 2024
 """
 from typing import Union
+import numpy as np
+import torch
 import optiland.backend as be
 from optiland.fields import Field, FieldGroup
 from optiland.surfaces import SurfaceGroup, ObjectSurface
@@ -457,10 +459,10 @@ class Optic:
             Py (float or numpy.ndarray): The normalized y pupil coordinate
             wavelength (float): The wavelength of the rays.
         """
-        vx, vy = self.fields.get_vig_factor(Hx, Hy)
-
         Hx = be.array(Hx)
         Hy = be.array(Hy)
+
+        vx, vy = self.fields.get_vig_factor(Hx, Hy)
 
         Px *= (1 - vx)
         Py *= (1 - vy)
@@ -469,7 +471,7 @@ class Optic:
         max_size = max([be.size(arr) for arr in [Hx, Hy, Px, Py]])
         Hx, Hy, Px, Py = [
             be.full(max_size, value) if isinstance(value, (float, int))
-            else value if isinstance(value, be.ndarray)
+            else value if isinstance(value, (np.ndarray, torch.Tensor))
             else None
             for value in [Hx, Hy, Px, Py]
         ]
