@@ -426,6 +426,8 @@ class Optic:
         Returns:
             RealRays: The RealRays object containing the traced rays.
         """
+        Hx = be.array(Hx)
+        Hy = be.array(Hy)
 
         if isinstance(distribution, str):
             distribution = create_distribution(distribution)
@@ -456,6 +458,9 @@ class Optic:
             wavelength (float): The wavelength of the rays.
         """
         vx, vy = self.fields.get_vig_factor(Hx, Hy)
+
+        Hx = be.array(Hx)
+        Hy = be.array(Hy)
 
         Px *= (1 - vx)
         Py *= (1 - vy)
