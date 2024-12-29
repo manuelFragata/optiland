@@ -137,3 +137,60 @@ def vstack(arrays):
     if _current_backend == torch:
         return torch.cat(arrays, dim=0)
     return np.vstack(arrays)
+
+
+def torch_interp(x, xp, fp):
+    """
+    Mimics numpy.interp for 1D linear interpolation in PyTorch.
+
+    Args:
+        x (torch.Tensor): Points to interpolate.
+        xp (torch.Tensor): Known x-coordinates.
+        fp (torch.Tensor): Known y-coordinates.
+
+    Returns:
+        torch.Tensor: Interpolated values.
+    """
+    # Ensure tensors are float for arithmetic operations
+    x = torch.as_tensor(x, dtype=torch.float32)
+    xp = torch.as_tensor(xp, dtype=torch.float32)
+    fp = torch.as_tensor(fp, dtype=torch.float32)
+
+    # Sort xp and fp based on xp
+    sorted_indices = torch.argsort(xp)
+    xp = xp[sorted_indices]
+    fp = fp[sorted_indices]
+
+    # Clip x to be within the range of xp
+    x_clipped = torch.clip(x, xp[0], xp[-1])
+
+    # Find indices where each x would be inserted to maintain order
+    indices = torch.searchsorted(xp, x_clipped, right=True)
+    indices = torch.clamp(indices, 1, len(xp) - 1)
+
+    # Get the x-coordinates and y-coordinates for interpolation
+    x0 = xp[indices - 1]
+    x1 = xp[indices]
+    y0 = fp[indices - 1]
+    y1 = fp[indices]
+
+    # Linear interpolation formula
+    interpolated = y0 + (y1 - y0) * (x_clipped - x0) / (x1 - x0)
+    return interpolated
+
+
+def interp(x, xp, fp):
+    if _current_backend == torch:
+        return torch_interp(x, xp, fp)
+    return np.interp(x, xp, fp)
+
+
+def atleast_2d(x):
+    if _current_backend == torch:
+        x = torch.as_tensor(x)
+        if x.ndim == 0:  # Scalar -> (1, 1)
+            return x.unsqueeze(0).unsqueeze(0)
+        elif x.ndim == 1:  # 1D array -> (1, N)
+            return x.unsqueeze(0)
+        return x  # Already 2D or higher
+    return np.atleast_2d(x)
