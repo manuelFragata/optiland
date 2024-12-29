@@ -88,6 +88,14 @@ def full_like(x, fill_value):
     return np.full_like(x, fill_value)
 
 
+def full(shape, fill_value):
+    """Create an array/tensor filled with fill_value."""
+    if _current_backend == torch:
+        return torch.full(shape, fill_value, device=get_device(),
+                          dtype=torch.float32)
+    return np.full(shape, fill_value)
+
+
 def from_matrix(matrix):
     if _current_backend == torch:
         raise NotImplementedError('from_matrix is not implemented for torch.')
