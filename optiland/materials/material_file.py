@@ -10,6 +10,7 @@ import os
 from io import StringIO
 import yaml
 import numpy as np
+import optiland.backend as be
 from optiland.materials.base import BaseMaterial
 
 
@@ -92,7 +93,7 @@ class MaterialFile(BaseMaterial):
             ValueError: If no extinction coefficient data is found.
         """
         try:
-            return np.interp(wavelength, self._k_wavelength, self._k)
+            return be.interp(wavelength, self._k_wavelength, self._k)
         except ValueError:
             file = os.path.basename(self.filename)
             raise ValueError(f'No extinction coefficient data found for '
@@ -116,7 +117,7 @@ class MaterialFile(BaseMaterial):
                 n += c[k] * w**2 / (w**2 - c[k+1]**2)
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 1.')
-        return np.sqrt(n)
+        return be.sqrt(n)
 
     def _formula_2(self, w):
         """
@@ -136,7 +137,7 @@ class MaterialFile(BaseMaterial):
                 n += c[k] * w**2 / (w**2 - c[k+1])
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 2.')
-        return np.sqrt(n)
+        return be.sqrt(n)
 
     def _formula_3(self, w):
         """
@@ -154,7 +155,7 @@ class MaterialFile(BaseMaterial):
             n = c[0]
             for k in range(1, len(c), 2):
                 n += c[k]*w**c[k+1]
-            return np.sqrt(n)
+            return be.sqrt(n)
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 3.')
 
@@ -175,7 +176,7 @@ class MaterialFile(BaseMaterial):
                 c[5]*w**c[6] / (w**2 - c[7]**c[8])
             for k in range(9, len(c), 2):
                 n += c[k]*w**c[k+1]
-            return np.sqrt(n)
+            return be.sqrt(n)
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 4.')
 
@@ -255,7 +256,7 @@ class MaterialFile(BaseMaterial):
             raise ValueError('Invalid coefficients for dispersion formula 8.')
 
         b = c[0] + c[1] * w**2 / (w**2 - c[2]) + c[3] * w**2
-        return np.sqrt((1 + 2*b) / (1 - b))
+        return be.sqrt((1 + 2*b) / (1 - b))
 
     def _formula_9(self, w):
         """
@@ -274,12 +275,12 @@ class MaterialFile(BaseMaterial):
 
         n = (c[0] + c[1] / (w**2 - c[2]) +
              c[3]*(w - c[4]) / ((w - c[4])**2 + c[5]))
-        return np.sqrt(n)
+        return be.sqrt(n)
 
     def _tabulated_n(self, w):
         """Calculate the refractive index using tabulated data."""
         try:
-            return np.interp(w, self._n_wavelength, self._n)
+            return be.interp(w, self._n_wavelength, self._n)
         except ValueError:
             raise ValueError('No tabular refractive index data found.')
 
@@ -309,7 +310,7 @@ class MaterialFile(BaseMaterial):
             # Parse tabulated data
             elif sub_data_type.startswith('tabulated'):
                 data_file = StringIO(sub_data['data'])
-                arr = np.atleast_2d(np.loadtxt(data_file))
+                arr = be.atleast_2d(np.loadtxt(data_file))
 
                 if sub_data_type == 'tabulated n':
                     self._n_wavelength = arr[:, 0]
