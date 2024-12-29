@@ -11,7 +11,7 @@ functions in Optiland.
 Kramer Harrison, 2024
 """
 from typing import Union
-import numpy as np
+import optiland.backend as be
 from optiland.fields import Field, FieldGroup
 from optiland.surfaces import SurfaceGroup, ObjectSurface
 from optiland.wavelength import WavelengthGroup
@@ -85,7 +85,7 @@ class Optic:
     def total_track(self):
         """float: the total track length of the system"""
         z = self.surface_group.positions[1:-1]
-        return np.max(z) - np.min(z)
+        return be.max(z) - be.min(z)
 
     @property
     def polarization_state(self):
@@ -278,11 +278,11 @@ class Optic:
 
         # Scale radii & thicknesses
         for surf_idx in range(num_surfaces):
-            if not np.isinf(radii[surf_idx]):
+            if not be.isinf(radii[surf_idx]):
                 self.set_radius(radii[surf_idx] * scale_factor, surf_idx)
 
             if (surf_idx != num_surfaces-1
-               and not np.isinf(thicknesses[surf_idx])):
+               and not be.isinf(thicknesses[surf_idx])):
                 self.set_thickness(thicknesses[surf_idx] * scale_factor,
                                    surf_idx)
 
@@ -381,7 +381,7 @@ class Optic:
         n = []
         for surface in self.surface_group.surfaces:
             n.append(surface.material_post.n(wavelength))
-        return np.array(n)
+        return be.array(n)
 
     def update_paraxial(self):
         """
@@ -390,8 +390,8 @@ class Optic:
         """
         ya, _ = self.paraxial.marginal_ray()
         yb, _ = self.paraxial.chief_ray()
-        ya = np.abs(np.ravel(ya))
-        yb = np.abs(np.ravel(yb))
+        ya = be.abs(be.ravel(ya))
+        yb = be.abs(be.ravel(yb))
         for k, surface in enumerate(self.surface_group.surfaces):
             surface.set_semi_aperture(r_max=ya[k]+yb[k])
 
@@ -461,10 +461,10 @@ class Optic:
         Py *= (1 - vy)
 
         # assure all variables are arrays of the same size
-        max_size = max([np.size(arr) for arr in [Hx, Hy, Px, Py]])
+        max_size = max([be.size(arr) for arr in [Hx, Hy, Px, Py]])
         Hx, Hy, Px, Py = [
-            np.full(max_size, value) if isinstance(value, (float, int))
-            else value if isinstance(value, np.ndarray)
+            be.full(max_size, value) if isinstance(value, (float, int))
+            else value if isinstance(value, be.ndarray)
             else None
             for value in [Hx, Hy, Px, Py]
         ]
