@@ -142,11 +142,12 @@ class RandomDistribution(BaseDistribution):
         Args:
             num_points (int): The number of points to generate.
         """
-        r = be.uniform(size=num_points, generator=self.rng)
-        theta = be.uniform(0, 2 * be.pi, size=num_points, generator=self.rng)
+        r = be.random_uniform(size=num_points, generator=self.rng)
+        theta = be.random_uniform(0, 2 * be.pi, size=num_points,
+                                  generator=self.rng)
 
-        self.x = be.sqrt(r) * self.backend.cos(theta)
-        self.y = be.sqrt(r) * self.backend.sin(theta)
+        self.x = be.sqrt(r) * be.cos(theta)
+        self.y = be.sqrt(r) * be.sin(theta)
 
 
 class UniformDistribution(BaseDistribution):
