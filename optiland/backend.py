@@ -185,6 +185,15 @@ def interp(x, xp, fp):
     return np.interp(x, xp, fp)
 
 
+def atleast_1d(x):
+    if _current_backend == torch:
+        x = torch.as_tensor(x, dtype=torch.float32)
+        if x.ndim == 0:  # Scalar -> (1,)
+            return x.unsqueeze(0)
+        return x  # Already 1D or higher
+    return np.atleast_1d(x)
+
+
 def atleast_2d(x):
     if _current_backend == torch:
         x = torch.as_tensor(x, dtype=torch.float32)
