@@ -251,7 +251,9 @@ def default_rng(seed=None):
 def random_uniform(low=0.0, high=1.0, size=None, generator=None):
     if _current_backend == torch:
         if generator is None:
-            return torch.empty(size).uniform_(low, high)
+            return torch.empty(size, device=get_device()).uniform_(low, high)
         else:
-            return torch.empty(size, generator=generator).uniform_(low, high)
+            return torch.empty(size, device=get_device()).uniform_(
+                low, high, generator=generator
+            )
     return np.random.uniform(low, high, size)
