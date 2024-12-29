@@ -203,3 +203,9 @@ def atleast_2d(x):
             return x.unsqueeze(0)
         return x  # Already 2D or higher
     return np.atleast_2d(x)
+
+
+def size(x):
+    if _current_backend == torch:
+        return torch.numel(x)
+    return x.size
