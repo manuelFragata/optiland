@@ -80,6 +80,14 @@ def ones_like(x):
     return np.ones_like(x)
 
 
+def full(shape, fill_value):
+    """Create an array/tensor filled with fill_value."""
+    if _current_backend == torch:
+        return torch.full(shape, fill_value, device=get_device(),
+                          dtype=torch.float32)
+    return np.full(shape, fill_value)
+
+
 def full_like(x, fill_value):
     """
     Create an array/tensor filled with fill_value with the same shape as x.
@@ -90,12 +98,17 @@ def full_like(x, fill_value):
     return np.full_like(x, fill_value)
 
 
-def full(shape, fill_value):
-    """Create an array/tensor filled with fill_value."""
-    if _current_backend == torch:
-        return torch.full(shape, fill_value, device=get_device(),
-                          dtype=torch.float32)
-    return np.full(shape, fill_value)
+def to_numpy(array):
+    """Converts the input array to a NumPy array, regardless of the backend."""
+    if isinstance(array, np.ndarray):
+        return array
+    elif hasattr(array, 'numpy'):  # PyTorch tensor
+        return array.numpy()
+    elif hasattr(array, 'cpu'):  # PyTorch tensors on CUDA
+        return array.cpu().numpy()
+    else:
+        raise TypeError(f'Unsupported type for conversion to '
+                        f'NumPy: {type(array)}')
 
 
 def from_matrix(matrix):
