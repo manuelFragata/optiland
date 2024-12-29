@@ -9,7 +9,7 @@ Kramer Harrison, 2024
 
 from abc import ABC, abstractmethod
 import warnings
-import numpy as np
+import optiland.backend as be
 from optiland.geometries.standard import StandardGeometry
 from optiland.coordinate_system import CoordinateSystem
 
@@ -89,17 +89,17 @@ class NewtonRaphsonGeometry(StandardGeometry, ABC):
             numpy.ndarray: The distances between the geometry and the rays.
         """
         x, y, z = self._intersection_sphere(rays)
-        intersections = np.column_stack((x, y, z))
-        ray_directions = np.column_stack((rays.L, rays.M, rays.N))
+        intersections = be.column_stack((x, y, z))
+        ray_directions = be.column_stack((rays.L, rays.M, rays.N))
         for i in range(self.max_iter):
             z_surface = self.sag(intersections[:, 0], intersections[:, 1])
             dz = intersections[:, 2] - z_surface
             distance = dz / ray_directions[:, 2]
             intersections -= distance[:, None] * ray_directions
-            if np.max(np.abs(dz)) < self.tol:
+            if be.max(be.abs(dz)) < self.tol:
                 break
-        position = np.column_stack((rays.x, rays.y, rays.z))
-        return np.linalg.norm(intersections - position, axis=1)
+        position = be.column_stack((rays.x, rays.y, rays.z))
+        return be.linalg.norm(intersections - position, axis=1)
 
     def _intersection_sphere(self, rays):
         """
@@ -122,19 +122,19 @@ class NewtonRaphsonGeometry(StandardGeometry, ABC):
         # two solutions for distance to sphere
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
-            t1 = (-b + np.sqrt(d)) / (2 * a)
-            t2 = (-b - np.sqrt(d)) / (2 * a)
+            t1 = (-b + be.sqrt(d)) / (2 * a)
+            t2 = (-b - be.sqrt(d)) / (2 * a)
 
         # intersections "behind" ray, set to inf to ignore
-        t1[t1 < 0] = np.inf
-        t2[t2 < 0] = np.inf
+        t1[t1 < 0] = be.inf
+        t2[t2 < 0] = be.inf
 
         # find intersection points in z
         z1 = rays.z + t1 * rays.N
         z2 = rays.z + t2 * rays.N
 
         # take intersection closest to z = 0 (i.e., vertex of geometry)
-        t = np.where(np.abs(z1) <= np.abs(z2), t1, t2)
+        t = be.where(be.abs(z1) <= be.abs(z2), t1, t2)
 
         # handle case when a = 0
         cond = a == 0
