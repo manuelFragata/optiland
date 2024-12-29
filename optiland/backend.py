@@ -118,3 +118,22 @@ def polyval(coeffs, x):
     if _current_backend == torch:
         return sum(c * x**i for i, c in enumerate(coeffs))
     return np.polyval(coeffs, x)
+
+
+def load(filename):
+    array = np.load(filename)
+    if _current_backend == torch:
+        array = torch.from_numpy(array)
+    return array
+
+
+def hstack(arrays):
+    if _current_backend == torch:
+        return torch.cat(arrays, dim=1)
+    return np.hstack(arrays)
+
+
+def vstack(arrays):
+    if _current_backend == torch:
+        return torch.cat(arrays, dim=0)
+    return np.vstack(arrays)
