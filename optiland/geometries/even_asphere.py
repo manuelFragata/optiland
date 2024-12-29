@@ -13,7 +13,7 @@ where
 
 Kramer Harrison, 2024
 """
-import numpy as np
+import optiland.backend as be
 from optiland.geometries.newton_raphson import NewtonRaphsonGeometry
 from optiland.coordinate_system import CoordinateSystem
 
@@ -47,7 +47,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
     def __init__(self, coordinate_system, radius, conic=0.0,
                  tol=1e-10, max_iter=100, coefficients=[]):
         super().__init__(coordinate_system, radius, conic, tol, max_iter)
-        self.c = coefficients
+        self.c = be.array(coefficients)
         self.is_symmetric = True
 
     def sag(self, x=0, y=0):
@@ -65,7 +65,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
         """
         r2 = x**2 + y**2
         z = r2 / (self.radius *
-                  (1 + np.sqrt(1 - (1 + self.k) * r2 / self.radius**2)))
+                  (1 + be.sqrt(1 - (1 + self.k) * r2 / self.radius**2)))
         for i, Ci in enumerate(self.c):
             z += Ci * r2 ** (i + 1)
 
@@ -85,7 +85,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
         """
         r2 = x**2 + y**2
 
-        denom = self.radius * np.sqrt(1 - (1 + self.k)*r2 / self.radius**2)
+        denom = self.radius * be.sqrt(1 - (1 + self.k)*r2 / self.radius**2)
         dfdx = x / denom
         dfdy = y / denom
 
@@ -93,7 +93,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
             dfdx += 2 * (i+1) * x * Ci * r2**i
             dfdy += 2 * (i+1) * y * Ci * r2**i
 
-        mag = np.sqrt(dfdx**2 + dfdy**2 + 1)
+        mag = be.sqrt(dfdx**2 + dfdy**2 + 1)
 
         nx = dfdx / mag
         ny = dfdy / mag
