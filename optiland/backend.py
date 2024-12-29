@@ -46,6 +46,8 @@ def __getattr__(name):
 def array(x):
     """Create an array/tensor."""
     if _current_backend == torch:
+        if isinstance(x, torch.Tensor):
+            return x
         return torch.tensor(x, device=get_device(), dtype=torch.float32)
     return np.asarray(x, dtype=float)
 
