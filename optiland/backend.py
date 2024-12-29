@@ -104,3 +104,17 @@ def copy(x):
     if _current_backend == torch:
         return x.clone()
     return x.copy()
+
+
+def polyfit(x, y, degree):
+    if _current_backend == torch:
+        X = torch.stack([x**i for i in range(degree + 1)], dim=1)
+        coeffs, _ = torch.lstsq(y.unsqueeze(1), X)
+        return coeffs[:degree + 1].squeeze()
+    return np.polyfit(x, y, degree)
+
+
+def polyval(coeffs, x):
+    if _current_backend == torch:
+        return sum(c * x**i for i, c in enumerate(coeffs))
+    return np.polyval(coeffs, x)
