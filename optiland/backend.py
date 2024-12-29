@@ -242,6 +242,8 @@ def size(x):
 
 def default_rng(seed=None):
     if _current_backend == torch:
+        if seed is None:
+            seed = torch.initial_seed()
         return torch.Generator(device=get_device()).manual_seed(seed)
     return np.random.default_rng(seed)
 
