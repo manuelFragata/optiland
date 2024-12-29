@@ -110,9 +110,7 @@ def to_numpy(array):
     """Converts the input array to a NumPy array, regardless of the backend."""
     if isinstance(array, np.ndarray):
         return array
-    elif hasattr(array, 'numpy'):  # PyTorch tensor
-        return array.numpy()
-    elif hasattr(array, 'cpu'):  # PyTorch tensors on CUDA
+    elif isinstance(array, torch.Tensor):
         return array.cpu().numpy()
     else:
         raise TypeError(f'Unsupported type for conversion to '
