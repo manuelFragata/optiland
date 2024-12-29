@@ -5,7 +5,7 @@ system.
 
 Kramer Harrison, 2023
 """
-import numpy as np
+import optiland.backend as be
 
 
 class Field:
@@ -85,27 +85,27 @@ class FieldGroup:
     @property
     def x_fields(self):
         """np.array: x field values"""
-        return np.array([field.x for field in self.fields])
+        return be.array([field.x for field in self.fields])
 
     @property
     def y_fields(self):
         """np.array: y field values"""
-        return np.array([field.y for field in self.fields])
+        return be.array([field.y for field in self.fields])
 
     @property
     def max_x_field(self):
         """np.array: max field in x"""
-        return np.max(self.x_fields)
+        return be.max(self.x_fields)
 
     @property
     def max_y_field(self):
         """np.array: max field in y"""
-        return np.max(self.y_fields)
+        return be.max(self.y_fields)
 
     @property
     def max_field(self):
         """np.array: max field in radial coordinates"""
-        return np.max(np.sqrt(self.x_fields**2 + self.y_fields**2))
+        return be.max(be.sqrt(self.x_fields**2 + self.y_fields**2))
 
     @property
     def num_fields(self):
@@ -115,12 +115,12 @@ class FieldGroup:
     @property
     def vx(self):
         """np.array: vignetting factors in x"""
-        return np.array([field.vx for field in self.fields])
+        return be.array([field.vx for field in self.fields])
 
     @property
     def vy(self):
         """np.array: vignetting factors in y"""
-        return np.array([field.vy for field in self.fields])
+        return be.array([field.vy for field in self.fields])
 
     def get_vig_factor(self, Hx, Hy):
         """
@@ -139,19 +139,19 @@ class FieldGroup:
         Raises:
             NotImplementedError: If the system is not rotationally-symmetric.
         """
-        if np.all(self.x_fields == 0):  # assume rotationally symmetric
-            idx_sorted = np.argsort(self.y_fields)
+        if be.all(self.x_fields == 0):  # assume rotationally symmetric
+            idx_sorted = be.argsort(self.y_fields)
             if self.max_y_field == 0:
-                h_sorted = np.zeros(self.num_fields)
+                h_sorted = be.zeros(self.num_fields)
             else:
                 h_sorted = self.y_fields[idx_sorted] / self.max_y_field
             vx_sorted = self.vx[idx_sorted]
             vy_sorted = self.vy[idx_sorted]
 
-            h = np.sqrt(Hx**2 + Hy**2)
+            h = be.sqrt(Hx**2 + Hy**2)
 
-            vx_new = np.interp(h, h_sorted, vx_sorted)
-            vy_new = np.interp(h, h_sorted, vy_sorted)
+            vx_new = be.interp(h, h_sorted, vx_sorted)
+            vy_new = be.interp(h, h_sorted, vy_sorted)
             return vx_new, vy_new
         else:
             raise NotImplementedError('Currently only rotationally-symmetric '
