@@ -52,10 +52,13 @@ class FieldCurvature:
         field = np.linspace(0, be.to_numpy(self.optic.fields.max_field),
                             self.num_points)
 
+        # prepare data for visualization
+        data = self._prepare_data()
+
         for k, wavelength in enumerate(self.wavelengths):
-            ax.plot(self.data[k][0], field, f'C{k}', zorder=10,
+            ax.plot(data[k][0], field, f'C{k}', zorder=10,
                     label=f'{wavelength:.4f} µm, Tangential')
-            ax.plot(self.data[k][1], field, f'C{k}--', zorder=10,
+            ax.plot(data[k][1], field, f'C{k}--', zorder=10,
                     label=f'{wavelength:.4f} µm, Sagittal')
 
         ax.set_xlabel('Image Plane Delta (mm)')
@@ -159,3 +162,17 @@ class FieldCurvature:
         t2 = (L2*z01 - L2*z02 - N2*x01 + N2*x02) / (L1*N2 - L2*N1)
 
         return t2 * N1
+
+    def _prepare_data(self):
+        """
+        Prepare the data for plotting.
+
+        Returns:
+            list: List of field data.
+        """
+        data = []
+        for wave_data in self.data:
+            tangential = be.to_numpy(wave_data[0])
+            sagittal = be.to_numpy(wave_data[1])
+            data.append([tangential, sagittal])
+        return data
