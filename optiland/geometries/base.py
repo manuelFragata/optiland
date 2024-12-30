@@ -87,6 +87,9 @@ class BaseGeometry(ABC):
         Args:
             z_shift (float, optional): The amount to shift the geometry in the
                 z-direction. Defaults to 0.
+
+        Returns:
+            BaseGeometry: The inverted geometry.
         """
         cls = self.__class__
         attributes = self.__dict__.copy()
