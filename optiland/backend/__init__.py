@@ -11,6 +11,7 @@ from optiland.backend import (
     torch_backend
 )
 from optiland.backend.utils import to_numpy  # noqa: F401
+from optiland.backend.torch_backend import grad_mode  # noqa: F401
 
 
 _backends = {
