@@ -5,8 +5,8 @@ This module provides a spot diagram analysis for optical systems.
 Kramer Harrison, 2024
 """
 from copy import deepcopy
-import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 
 
 class SpotDiagram:
@@ -82,9 +82,10 @@ class SpotDiagram:
         axs = axs.flatten()
 
         # subtract centroid and find limits
-        data = self._center_spots(deepcopy(self.data))
+        data = self._prepare_data()
         geometric_size = self.geometric_spot_radius()
-        axis_lim = np.max(geometric_size)
+        axis_lim = be.max(be.array(geometric_size))
+        axis_lim = be.to_numpy(axis_lim)
 
         # plot wavelengths for each field
         for k, field_data in enumerate(data):
@@ -109,8 +110,8 @@ class SpotDiagram:
         norm_index = self.optic.wavelengths.primary_index
         centroid = []
         for field_data in self.data:
-            centroid_x = np.mean(field_data[norm_index][0])
-            centroid_y = np.mean(field_data[norm_index][1])
+            centroid_x = be.mean(field_data[norm_index][0])
+            centroid_y = be.mean(field_data[norm_index][1])
             centroid.append((centroid_x, centroid_y))
         return centroid
 
@@ -126,8 +127,8 @@ class SpotDiagram:
         for field_data in data:
             geometric_size_field = []
             for wave_data in field_data:
-                r = np.sqrt(wave_data[0]**2 + wave_data[1]**2)
-                geometric_size_field.append(np.max(r))
+                r = be.sqrt(wave_data[0]**2 + wave_data[1]**2)
+                geometric_size_field.append(be.max(r))
             geometric_size.append(geometric_size_field)
         return geometric_size
 
@@ -143,7 +144,7 @@ class SpotDiagram:
             rms_field = []
             for wave_data in field_data:
                 r2 = wave_data[0]**2 + wave_data[1]**2
-                rms_field.append(np.sqrt(np.mean(r2)))
+                rms_field.append(be.sqrt(be.mean(r2)))
             rms.append(rms_field)
         return rms
 
@@ -249,3 +250,17 @@ class SpotDiagram:
             ax.set_xlim((-axis_lim*buffer, axis_lim*buffer))
             ax.set_ylim((-axis_lim*buffer, axis_lim*buffer))
         ax.set_title(f'Hx: {field[0]:.3f}, Hy: {field[1]:.3f}')
+
+    def _prepare_data(self):
+        """Prepare the data for visualization."""
+        data = self._center_spots(deepcopy(self.data))
+        new_data = []
+        for field_data in data:
+            subdata = []
+            for wave_data in field_data:
+                x = be.to_numpy(wave_data[0])
+                y = be.to_numpy(wave_data[1])
+                intensity = be.to_numpy(wave_data[2])
+                subdata.append([x, y, intensity])
+            new_data.append(subdata)
+        return new_data
