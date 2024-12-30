@@ -84,9 +84,6 @@ class FieldCurvature:
             tangential = self._intersection_parabasal_tangential(wavelength)
             sagittal = self._intersection_parabasal_sagittal(wavelength)
 
-            tangential = be.to_numpy(tangential)
-            sagittal = be.to_numpy(sagittal)
-
             data.append([tangential, sagittal])
 
         return data
@@ -98,7 +95,7 @@ class FieldCurvature:
         Args:
             wavelength (float): The wavelength of the light.
             delta (float, optional): The delta value in normalized pupil y
-                coordinates for pairs of parabasal rays. Defaults to 1e-5.
+                coordinates for pairs of parabasal rays. Defaults to 1e-1.
 
         Returns:
             numpy.ndarray: The calculated intersection values.
@@ -134,7 +131,7 @@ class FieldCurvature:
         Args:
             wavelength (float): The wavelength of the light.
             delta (float, optional): The delta value in normalized pupil y
-                coordinates for pairs of parabasal rays. Defaults to 1e-5.
+                coordinates for pairs of parabasal rays. Defaults to 1e-1.
 
         Returns:
             numpy.ndarray: The calculated intersection values.
