@@ -58,8 +58,6 @@ class CookeTriplet(optic.Optic):
         self.add_wavelength(value=0.55, is_primary=True)
         self.add_wavelength(value=0.65)
 
-        self.update_paraxial()
-
 
 class DoubleGauss(optic.Optic):
     def __init__(self):
