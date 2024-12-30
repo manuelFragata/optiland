@@ -6,7 +6,6 @@ for an optical system.
 
 Kramer Harrison, 2024
 """
-# import numpy as np
 import matplotlib.pyplot as plt
 import optiland.backend as be
 
