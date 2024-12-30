@@ -273,6 +273,31 @@ class Surface:
             'is_reflective': self.is_reflective
         }
 
+    def invert(self, z_shift=0):
+        """
+        Creates an inverted copy of the surface.
+
+        Args:
+            z_shift (float, optional): The amount to shift the geometry in the
+                z-direction. Defaults to 0.
+
+        Returns:
+            Surface: The inverted surface.
+        """
+        new_geometry = self.geometry.invert(z_shift)
+
+        cls = self.__class__
+        attributes = self.__dict__.copy()
+
+        new_instance = cls.__new__(cls)
+        new_instance.__dict__.update(attributes)
+
+        new_instance.geometry = new_geometry
+        new_instance.material_pre = self.material_post
+        new_instance.material_post = self.material_pre
+
+        return new_instance
+
     @classmethod
     def from_dict(cls, data):
         """
