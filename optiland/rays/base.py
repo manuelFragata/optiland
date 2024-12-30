@@ -29,9 +29,9 @@ class BaseRays:
             dy (float): The amount to shift the rays in the y direction.
             dz (float): The amount to shift the rays in the z direction.
         """
-        self.x += dx
-        self.y += dy
-        self.z += dz
+        self.x = self.x + dx
+        self.y = self.y + dy
+        self.z = self.z + dz
 
     def _process_input(self, data):
         """
