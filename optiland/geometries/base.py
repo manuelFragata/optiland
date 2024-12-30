@@ -5,7 +5,6 @@ Geometries are used to define the shape of optical elements.
 
 Kramer Harrison, 2024
 """
-
 from abc import ABC, abstractmethod
 
 
@@ -81,6 +80,25 @@ class BaseGeometry(ABC):
             rays (RealRays): The rays to convert.
         """
         self.cs.globalize(rays)
+
+    def invert(self, z_shift=0):
+        """Created an inverted copy of the geometry.
+
+        Args:
+            z_shift (float, optional): The amount to shift the geometry in the
+                z-direction. Defaults to 0.
+        """
+        cls = self.__class__
+        attributes = self.__dict__.copy()
+
+        new_instance = cls.__new__(cls)
+        new_instance.__dict__.update(attributes)
+
+        new_instance.cs.z = z_shift - new_instance.cs.z
+        if hasattr(new_instance, 'radius'):
+            new_instance.radius = -new_instance.radius
+
+        return new_instance
 
     def to_dict(self):
         """Convert the geometry to a dictionary.
