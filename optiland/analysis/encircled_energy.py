@@ -48,7 +48,10 @@ class EncircledEnergy(SpotDiagram):
         """
         fig, ax = plt.subplots(figsize=figsize)
 
-        data = self._center_spots(deepcopy(self.data))
+        # prepare data for plotting
+        data = self._prepare_data()
+
+        data = self._center_spots(deepcopy(data))
         geometric_size = self.geometric_spot_radius()
         axis_lim = np.max(geometric_size)
         for k, field_data in enumerate(data):
@@ -74,8 +77,8 @@ class EncircledEnergy(SpotDiagram):
         """
         centroid = []
         for field_data in self.data:
-            centroid_x = np.mean(field_data[0][0])
-            centroid_y = np.mean(field_data[0][1])
+            centroid_x = be.mean(field_data[0][0])
+            centroid_y = be.mean(field_data[0][1])
             centroid.append((centroid_x, centroid_y))
         return centroid
 
@@ -123,8 +126,22 @@ class EncircledEnergy(SpotDiagram):
         y = self.optic.surface_group.y[-1, :]
         intensity = self.optic.surface_group.intensity[-1, :]
 
-        x = be.to_numpy(x)
-        y = be.to_numpy(y)
-        intensity = be.to_numpy(intensity)
-
         return [x, y, intensity]
+
+    def _prepare_data(self):
+        """
+        Prepare the data for plotting.
+
+        Returns:
+            list: List of field data.
+        """
+        data = []
+        for field_data in self.data:
+            subdata = []
+            for wave_data in field_data:
+                x = be.to_numpy(wave_data[0])
+                y = be.to_numpy(wave_data[1])
+                intensity = be.to_numpy(wave_data[2])
+                subdata.append([x, y, intensity])
+            data.append(subdata)
+        return data
