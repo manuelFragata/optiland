@@ -7,7 +7,7 @@ def to_numpy(x):
     if isinstance(x, (int, float, np.ndarray)):
         return x
     elif isinstance(x, torch.Tensor):
-        return x.cpu().numpy()
+        return x.detach().cpu().numpy()
     else:
         raise TypeError(f'Unsupported type for conversion to '
                         f'NumPy: {type(x)}')
