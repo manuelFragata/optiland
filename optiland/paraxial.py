@@ -352,6 +352,10 @@ class Paraxial:
             Py (float): Normalized pupil coordinate.
             wavelength (float): Wavelength of the light.
         """
+        Hy = self._process_input(Hy)
+        Py = self._process_input(Py)
+        wavelength = self._process_input(wavelength)
+
         EPL = self.EPL()
         EPD = self.EPD()
 
