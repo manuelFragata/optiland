@@ -9,7 +9,6 @@ Kramer Harrison, 2024
 """
 
 from typing import List
-from copy import deepcopy
 import optiland.backend as be
 from optiland.coatings import BaseCoatingPolarized
 from optiland.surfaces.standard_surface import Surface
@@ -249,19 +248,10 @@ class SurfaceGroup:
             SurfaceGroup: The inverted surface group.
 
         """
-        surfs_inverted = deepcopy(self.surfaces[::-1])
         z_shift = self.surfaces[-1].geometry.cs.z
-        for surf in surfs_inverted:
-            # scale radii by -1
-            surf.geometry.radius *= -1
 
-            # invert z position
-            surf.geometry.cs.z = z_shift - surf.geometry.cs.z
-
-            # swap initial and final materials
-            temp = surf.material_pre
-            surf.material_pre = surf.material_post
-            surf.material_post = temp
+        surfs_inverted = [surf.invert(z_shift)
+                          for surf in reversed(self.surfaces)]
 
         return SurfaceGroup(surfs_inverted)
 
