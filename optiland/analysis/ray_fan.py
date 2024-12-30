@@ -6,6 +6,7 @@ Kramer Harrison, 2024
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 
 
 class RayFan:
@@ -64,17 +65,20 @@ class RayFan:
         # Ensure axs is a 2D array
         axs = np.atleast_2d(axs)
 
-        Px = self.data['Px']
-        Py = self.data['Py']
+        # Prepare data for visualization
+        data = self._prepare_data()
+
+        Px = data['Px']
+        Py = data['Py']
 
         for k, field in enumerate(self.fields):
             for wavelength in self.wavelengths:
-                ex = self.data[f'{field}'][f'{wavelength}']['x']
-                i_x = self.data[f'{field}'][f'{wavelength}']['intensity_x']
+                ex = data[f'{field}'][f'{wavelength}']['x']
+                i_x = data[f'{field}'][f'{wavelength}']['intensity_x']
                 ex[i_x == 0] = np.nan
 
-                ey = self.data[f'{field}'][f'{wavelength}']['y']
-                i_y = self.data[f'{field}'][f'{wavelength}']['intensity_y']
+                ey = data[f'{field}'][f'{wavelength}']['y']
+                i_y = data[f'{field}'][f'{wavelength}']['intensity_y']
                 ey[i_y == 0] = np.nan
 
                 axs[k, 0].plot(Py, ey, zorder=3, label=f'{wavelength:.4f} µm')
@@ -107,8 +111,8 @@ class RayFan:
             dict: The generated ray fan data.
         """
         data = {}
-        data['Px'] = np.linspace(-1, 1, self.num_points)
-        data['Py'] = np.linspace(-1, 1, self.num_points)
+        data['Px'] = be.linspace(-1, 1, self.num_points)
+        data['Py'] = be.linspace(-1, 1, self.num_points)
         for field in self.fields:
             Hx = field[0]
             Hy = field[1]
@@ -140,8 +144,43 @@ class RayFan:
         for field in self.fields:
             x_offset = data[f'{field}'][f'{wave_ref}']['x'][self.num_points//2]
             y_offset = data[f'{field}'][f'{wave_ref}']['y'][self.num_points//2]
+
+            x_offset = be.copy(x_offset)
+            y_offset = be.copy(y_offset)
+
             for wavelength in self.wavelengths:
                 data[f'{field}'][f'{wavelength}']['x'] -= x_offset
                 data[f'{field}'][f'{wavelength}']['y'] -= y_offset
+
+        return data
+
+    def _prepare_data(self):
+        """
+        Prepare the data for visualization.
+        """
+        data = {}
+        for field in self.fields:
+            data[f'{field}'] = {}
+            for wavelength in self.wavelengths:
+                data[f'{field}'][f'{wavelength}'] = {}
+
+                data[f'{field}'][f'{wavelength}']['x'] = be.to_numpy(
+                    self.data[f'{field}'][f'{wavelength}']['x']
+                    )
+
+                data[f'{field}'][f'{wavelength}']['y'] = be.to_numpy(
+                    self.data[f'{field}'][f'{wavelength}']['y']
+                    )
+
+                data[f'{field}'][f'{wavelength}']['intensity_x'] = be.to_numpy(
+                    self.data[f'{field}'][f'{wavelength}']['intensity_x']
+                    )
+
+                data[f'{field}'][f'{wavelength}']['intensity_y'] = be.to_numpy(
+                    self.data[f'{field}'][f'{wavelength}']['intensity_y']
+                    )
+
+        data['Px'] = be.to_numpy(self.data['Px'])
+        data['Py'] = be.to_numpy(self.data['Py'])
 
         return data
