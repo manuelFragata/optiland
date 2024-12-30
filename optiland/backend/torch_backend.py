@@ -34,37 +34,38 @@ def array(x):
     if isinstance(x, torch.Tensor):
         return x
     return torch.tensor(x, device=get_device(), dtype=torch.float32,
-                        requires_grad=True)
+                        requires_grad=grad_mode.requires_grad)
 
 
 def zeros(shape):
     """Create an array/tensor filled with zeros."""
     return torch.zeros(shape, device=get_device(), dtype=torch.float32,
-                       requires_grad=True)
+                       requires_grad=grad_mode.requires_grad)
 
 
 def zeros_like(x):
     """Create an array/tensor filled with zeros with the same shape as x."""
     return torch.zeros_like(x, device=get_device(), dtype=torch.float32,
-                            requires_grad=True)
+                            requires_grad=grad_mode.requires_grad)
 
 
 def ones(shape):
     """Create an array/tensor filled with ones."""
     return torch.ones(shape, device=get_device(), dtype=torch.float32,
-                      requires_grad=True)
+                      requires_grad=grad_mode.requires_grad)
 
 
 def ones_like(x):
     """Create an array/tensor filled with ones with the same shape as x."""
     return torch.ones_like(x, device=get_device(), dtype=torch.float32,
-                           requires_grad=True)
+                           requires_grad=grad_mode.requires_grad)
 
 
 def full(shape, fill_value):
     """Create an array/tensor filled with fill_value."""
     return torch.full(shape, fill_value, device=get_device(),
-                      dtype=torch.float32, requires_grad=True)
+                      dtype=torch.float32,
+                      requires_grad=grad_mode.requires_grad)
 
 
 def full_like(x, fill_value):
@@ -74,13 +75,15 @@ def full_like(x, fill_value):
     if isinstance(fill_value, torch.Tensor):
         fill_value = fill_value.item()
     return torch.full_like(x, fill_value, device=get_device(),
-                           dtype=torch.float32, requires_grad=True)
+                           dtype=torch.float32,
+                           requires_grad=grad_mode.requires_grad)
 
 
 def linspace(start, stop, num=50):
     """Create an array/tensor of evenly spaced values."""
     return torch.linspace(start, stop, num, device=get_device(),
-                          dtype=torch.float32, requires_grad=True)
+                          dtype=torch.float32,
+                          requires_grad=grad_mode.requires_grad)
 
 
 def from_matrix(matrix):
