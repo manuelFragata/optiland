@@ -7,6 +7,7 @@ for each surface in the system.
 Kramer Harrison, 2024
 """
 import matplotlib.pyplot as plt
+import optiland.backend as be
 
 
 class YYbar:
@@ -40,6 +41,9 @@ class YYbar:
 
         ya, _ = self.optic.paraxial.marginal_ray()
         yb, _ = self.optic.paraxial.chief_ray()
+
+        ya = be.to_numpy(ya)
+        yb = be.to_numpy(yb)
 
         ya = ya.flatten()
         yb = yb.flatten()
