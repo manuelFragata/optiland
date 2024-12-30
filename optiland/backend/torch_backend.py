@@ -1,3 +1,4 @@
+import contextlib
 import numpy as np
 import torch
 from optiland.backend.device import get_device
@@ -5,6 +6,27 @@ from optiland.backend.device import get_device
 
 # Link to the underlying library
 _lib = torch
+
+
+class GradMode:
+    def __init__(self):
+        self.requires_grad = False
+
+    def enable(self):
+        self.requires_grad = True
+
+    def disable(self):
+        self.requires_grad = False
+
+    @contextlib.contextmanager
+    def temporary_enable(self):
+        old_state = self.requires_grad
+        self.requires_grad = True
+        yield
+        self.requires_grad = old_state
+
+
+grad_mode = GradMode()
 
 
 def array(x):
