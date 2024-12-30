@@ -167,3 +167,11 @@ def random_uniform(low=0.0, high=1.0, size=None, generator=None):
 
 def repeat(x, repeats):
     return torch.repeat_interleave(x, repeats)
+
+
+def flip(x):
+    return torch.flip(x, dims=(0,))
+
+
+def meshgrid(*arrays):
+    return torch.meshgrid(*arrays, indexing='ij')
