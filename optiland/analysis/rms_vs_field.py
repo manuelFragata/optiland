@@ -5,8 +5,8 @@ wavefront error versus field coordinate of an optical system.
 
 Kramer Harrison, 2024
 """
-import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 from optiland.analysis import SpotDiagram
 from optiland.wavefront import Wavefront
 
@@ -28,11 +28,11 @@ class RmsSpotSizeVsField(SpotDiagram):
     def __init__(self, optic, num_fields=64, wavelengths='all', num_rings=6,
                  distribution='hexapolar'):
         self.num_fields = num_fields
-        fields = [(0, Hy) for Hy in np.linspace(0, 1, num_fields)]
+        fields = [(0, Hy) for Hy in be.linspace(0, 1, num_fields)]
         super().__init__(optic, fields, wavelengths, num_rings, distribution)
 
-        self._field = np.array(fields)
-        self._spot_size = np.array(self.rms_spot_radius())
+        self._field = be.array(fields)
+        self._spot_size = be.array(self.rms_spot_radius())
 
     def view(self, figsize=(7, 4.5)):
         """View the RMS spot size versus field coordinate.
@@ -44,11 +44,14 @@ class RmsSpotSizeVsField(SpotDiagram):
         Returns:
             None
         """
+        # prepare data for visualization
+        field, spot_size = self._prepare_data()
+
         fig, ax = plt.subplots(figsize=figsize)
 
         wavelengths = self.optic.wavelengths.get_wavelengths()
         labels = [f'{wavelength:.4f} µm' for wavelength in wavelengths]
-        ax.plot(self._field[:, 1], self._spot_size, label=labels)
+        ax.plot(field[:, 1], spot_size, label=labels)
 
         ax.set_xlabel('Normalized Y Field Coordinate')
         ax.set_ylabel('RMS Spot Size (mm)')
@@ -60,6 +63,12 @@ class RmsSpotSizeVsField(SpotDiagram):
         plt.grid()
         plt.tight_layout()
         plt.show()
+
+    def _prepare_data(self):
+        """Prepare the data for visualization."""
+        field = be.to_numpy(self._field)
+        spot_size = be.to_numpy(self._spot_size)
+        return field, spot_size
 
 
 class RmsWavefrontErrorVsField(Wavefront):
