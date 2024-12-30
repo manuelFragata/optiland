@@ -10,6 +10,7 @@ from optiland.backend import (
     numpy_backend,
     torch_backend
 )
+from optiland.backend.utils import to_numpy  # noqa: F401
 
 
 _backends = {
