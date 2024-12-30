@@ -53,10 +53,13 @@ class Distortion:
         _, ax = plt.subplots(figsize=figsize)
         ax.axvline(x=0, color='k', linewidth=1, linestyle='--')
 
+        # prepare data for visualization
+        data = [be.to_numpy(d) for d in self.data]
+
         field = np.linspace(1e-10, be.to_numpy(self.optic.fields.max_field),
                             self.num_points)
         for k, wavelength in enumerate(self.wavelengths):
-            ax.plot(self.data[k], field, label=f'{wavelength:.4f} µm')
+            ax.plot(data[k], field, label=f'{wavelength:.4f} µm')
             ax.set_xlabel('Distortion (%)')
             ax.set_ylabel('Field')
 
@@ -96,6 +99,6 @@ class Distortion:
                 raise ValueError('''Distortion type must be "f-tan" or
                                  "f-theta"''')
 
-            data.append(be.to_numpy(100 * (yr - yp) / yp))
+            data.append(100 * (yr - yp) / yp)
 
         return data
