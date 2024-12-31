@@ -48,6 +48,15 @@ class IdealMaterial(BaseMaterial):
         """
         return self.absorp
 
+    def copy(self):
+        """
+        Returns a copy of the material.
+
+        Returns:
+            IdealMaterial: A copy of the material.
+        """
+        return IdealMaterial(be.copy(self.index), be.copy(self.absorp))
+
     def to_dict(self):
         """
         Returns a dictionary representation of the material.
