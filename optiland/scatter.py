@@ -12,6 +12,7 @@ from abc import ABC
 import numpy as np
 from numba import njit, prange
 from optiland.rays import RealRays
+import optiland.backend as be
 
 
 @njit(fastmath=True, cache=True)
@@ -178,6 +179,15 @@ class BaseBSDF(ABC):
         rays.N = scattered_vec[:, 2]
         return rays
 
+    def copy(self):
+        """
+        Create a copy of the BSDF object.
+
+        Returns:
+            BaseBSDF: A copy of the BSDF object.
+        """
+        return BaseBSDF()
+
     def to_dict(self):
         """
         Convert the BSDF to a dictionary.
@@ -208,6 +218,15 @@ class LambertianBSDF(BaseBSDF):
     def __init__(self):
         self.scattering_function = get_point_lambertian
 
+    def copy(self):
+        """
+        Create a copy of the LambertianBSDF object.
+
+        Returns:
+            LambertianBSDF: A copy of the LambertianBSDF object.
+        """
+        return LambertianBSDF()
+
     def to_dict(self):
         """
         Convert the BSDF to a dictionary.
@@ -237,6 +256,15 @@ class GaussianBSDF(BaseBSDF):
     def __init__(self, sigma):
         self.sigma = sigma
         self.scattering_function = func_wrapper(get_point_gaussian, sigma)
+
+    def copy(self):
+        """
+        Create a copy of the GaussianBSDF object.
+
+        Returns:
+            GaussianBSDF: A copy of the GaussianBSDF object.
+        """
+        return GaussianBSDF(be.copy(self.sigma))
 
     def to_dict(self):
         """
