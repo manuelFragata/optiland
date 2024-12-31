@@ -69,6 +69,14 @@ class Plane(BaseGeometry):
         """
         return 0, 0, 1
 
+    def copy(self):
+        """Create a copy of the plane geometry.
+
+        Returns:
+            Plane: The copied plane geometry.
+        """
+        return Plane(self.cs.copy())
+
     def to_dict(self):
         """Convert the plane geometry to a dictionary.
 
