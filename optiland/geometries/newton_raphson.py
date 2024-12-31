@@ -153,12 +153,12 @@ class NewtonRaphsonGeometry(StandardGeometry, ABC):
         Returns:
             NewtonRaphsonGeometry: The copy of the geometry.
         """
-        return self.__class__(
+        return NewtonRaphsonGeometry(
             self.cs.copy(),
             be.copy(self.radius),
             be.copy(self.conic),
             be.copy(self.tol),
-            self.max_iter
+            be.copy(self.max_iter)
         )
 
     def to_dict(self):
