@@ -263,6 +263,15 @@ class SurfaceGroup:
             if surface.material_pre != surface.material_post:
                 surface.set_fresnel_coating()
 
+    def copy(self):
+        """
+        Create a copy of the surface group.
+
+        Returns:
+            SurfaceGroup: The copy of the surface group.
+        """
+        return SurfaceGroup([surface.copy() for surface in self.surfaces])
+
     def to_dict(self):
         """
         Convert the surface group to a dictionary.
