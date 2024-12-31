@@ -24,4 +24,4 @@ def default_rng(seed=None):
 
 
 def random_uniform(low=0.0, high=1.0, size=None, generator=None):
-    return np.random.uniform(low, high, size)
+    return generator.uniform(low, high, size)
