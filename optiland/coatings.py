@@ -7,6 +7,7 @@ Kramer Harrison, 2024
 
 from abc import ABC, abstractmethod
 import numpy as np
+import optiland.backend as be
 from optiland.rays import RealRays
 from optiland.jones import JonesFresnel
 
@@ -93,6 +94,15 @@ class BaseCoating(ABC):
         """
         pass  # pragma: no cover
 
+    def copy(self):
+        """
+        Creates a copy of the coating.
+
+        Returns:
+            BaseCoating: The copy of the coating.
+        """
+        return BaseCoating()
+
     def to_dict(self):
         """
         Converts the coating to a dictionary.
@@ -176,6 +186,18 @@ class SimpleCoating(BaseCoating):
         rays.i *= self.transmittance
         return rays
 
+    def copy(self):
+        """
+        Creates a copy of the coating.
+
+        Returns:
+            SimpleCoating: The copy of the coating.
+        """
+        return SimpleCoating(
+            be.copy(self.transmittance),
+            be.copy(self.reflectance)
+        )
+
     def to_dict(self):
         """
         Converts the coating to a dictionary.
@@ -252,32 +274,6 @@ class BaseCoatingPolarized(BaseCoating, ABC):
         rays.update(jones)
         return rays
 
-    def to_dict(self):
-        """
-        Converts the coating to a dictionary.
-
-        Returns:
-            dict: The dictionary representation of the coating.
-        """
-        return {
-            'type': self.__class__.__name__,
-            'material_pre': self.material_pre,
-            'material_post': self.material_post
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        """
-        Creates a coating from a dictionary.
-
-        Args:
-            data (dict): The dictionary representation of the coating.
-
-        Returns:
-            BaseCoating: The coating created from the dictionary.
-        """
-        return cls(data['material_pre'], data['material_post'])
-
 
 class FresnelCoating(BaseCoatingPolarized):
     """
@@ -300,6 +296,18 @@ class FresnelCoating(BaseCoatingPolarized):
         self.material_post = material_post
 
         self.jones = JonesFresnel(material_pre, material_post)
+
+    def copy(self):
+        """
+        Creates a copy of the coating.
+
+        Returns:
+            FresnelCoating: The copy of the coating.
+        """
+        return FresnelCoating(
+            self.material_pre.copy(),
+            self.material_post.copy()
+        )
 
     def to_dict(self):
         """
