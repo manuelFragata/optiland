@@ -65,6 +65,15 @@ class BaseMaterial(ABC):
         nC = self.n(0.6562725)
         return (nD - 1) / (nF - nC)
 
+    def copy(self):
+        """
+        Create a copy of the material.
+
+        Returns:
+            BaseMaterial: The copy of the material.
+        """
+        return BaseMaterial()
+
     def to_dict(self):
         """Convert the material to a dictionary.
 
