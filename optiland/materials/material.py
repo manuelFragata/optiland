@@ -222,6 +222,16 @@ class Material(MaterialFile):
         full_filename = os.path.join(database_dir, filename)
         return full_filename, material_data
 
+    def copy(self):
+        """
+        Creates a copy of the material.
+
+        Returns:
+            Material: The copy of the material.
+        """
+        return Material(self.name, self.reference, self.robust,
+                        self.min_wavelength, self.max_wavelength)
+
     def to_dict(self):
         """
         Converts the material to a dictionary.
