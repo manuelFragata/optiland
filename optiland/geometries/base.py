@@ -81,27 +81,13 @@ class BaseGeometry(ABC):
         """
         self.cs.globalize(rays)
 
-    def invert(self, z_shift=0):
-        """Created an inverted copy of the geometry.
-
-        Args:
-            z_shift (float, optional): The amount to shift the geometry in the
-                z-direction. Defaults to 0.
+    def copy(self):
+        """Create a copy of the geometry.
 
         Returns:
-            BaseGeometry: The inverted geometry.
+            BaseGeometry: The copy of the geometry.
         """
-        cls = self.__class__
-        attributes = self.__dict__.copy()
-
-        new_instance = cls.__new__(cls)
-        new_instance.__dict__.update(attributes)
-
-        new_instance.cs.z = z_shift - new_instance.cs.z
-        if hasattr(new_instance, 'radius'):
-            new_instance.radius = -new_instance.radius
-
-        return new_instance
+        return self.__class__(self.cs.copy())
 
     def to_dict(self):
         """Convert the geometry to a dictionary.
