@@ -68,8 +68,6 @@ class SpotDiagram:
 
         self.data = result[0]
         self.centroids = result[1]
-        self.geometric_spot_radius = result[2]
-        self.rms_spot_radius = result[3]
 
     def view(self, figsize=(12, 4)):
         """View the spot diagram
@@ -91,7 +89,7 @@ class SpotDiagram:
 
         # subtract centroid and find limits
         data = self._prepare_data(self.data)
-        geometric_size = self.geometric_spot_radius
+        geometric_size = self.geometric_spot_radius()
         axis_lim = be.max(be.array(geometric_size))
         axis_lim = be.to_numpy(axis_lim)
 
@@ -116,7 +114,16 @@ class SpotDiagram:
             geometric_size (List): Geometric spot radius for field and
                 wavelength
         """
-        return self.geometric_spot_radius
+        geometric_size = []
+        for k, field_data in enumerate(self.data):
+            geometric_size_field = []
+            for wave_data in field_data:
+                x = wave_data[0] - self.centroids[k][0]
+                y = wave_data[1] - self.centroids[k][1]
+                r = be.sqrt(x**2 + y**2)
+                geometric_size_field.append(be.max(r))
+            geometric_size.append(geometric_size_field)
+        return geometric_size
 
     def rms_spot_radius(self):
         """Root mean square (RMS) spot radius of each spot
@@ -124,40 +131,12 @@ class SpotDiagram:
         Returns:
             rms (List): RMS spot radius for each field and wavelength.
         """
-        return self.rms_spot_radius
-
-    @staticmethod
-    def _geometric_spot_radius(data, centroids):
-        """Geometric spot radius of each spot
-
-        Returns:
-            geometric_size (List): Geometric spot radius for field and
-                wavelength
-        """
-        geometric_size = []
-        for k, field_data in enumerate(data):
-            geometric_size_field = []
-            for wave_data in field_data:
-                x = wave_data[0] - centroids[k][0]
-                y = wave_data[1] - centroids[k][1]
-                r = be.sqrt(x**2 + y**2)
-                geometric_size_field.append(be.max(r))
-            geometric_size.append(geometric_size_field)
-        return geometric_size
-
-    @staticmethod
-    def _rms_spot_radius(data, centroids):
-        """Root mean square (RMS) spot radius of each spot
-
-        Returns:
-            rms (List): RMS spot radius for each field and wavelength.
-        """
         rms = []
-        for k, field_data in enumerate(data):
+        for k, field_data in enumerate(self.data):
             rms_field = []
             for wave_data in field_data:
-                x = wave_data[0] - centroids[k][0]
-                y = wave_data[1] - centroids[k][1]
+                x = wave_data[0] - self.centroids[k][0]
+                y = wave_data[1] - self.centroids[k][1]
                 r2 = x**2 + y**2
                 rms_field.append(be.sqrt(be.mean(r2)))
             rms.append(rms_field)
@@ -201,10 +180,8 @@ class SpotDiagram:
             data.append(field_data)
 
         centroids = self._compute_centroids(data)
-        geo_spot_size = self._geometric_spot_radius(data, centroids)
-        rms_spot_size = self._rms_spot_radius(data, centroids)
 
-        return data, centroids, geo_spot_size, rms_spot_size
+        return data, centroids
 
     def _generate_field_data(self, field, wavelength, num_rays=100,
                              distribution='hexapolar'):
