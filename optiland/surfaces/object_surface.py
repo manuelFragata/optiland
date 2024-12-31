@@ -97,6 +97,18 @@ class ObjectSurface(Surface):
         """
         return rays
 
+    def copy(self):
+        """
+        Creates a copy of the surface.
+
+        Returns:
+            Surface: The copy of the surface.
+        """
+        return ObjectSurface(
+            geometry=self.geometry.copy(),
+            material_post=self.material_post.copy()
+        )
+
     def to_dict(self):
         """
         Returns a dictionary representation of the surface.
