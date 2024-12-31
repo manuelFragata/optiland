@@ -248,10 +248,19 @@ class SurfaceGroup:
             SurfaceGroup: The inverted surface group.
 
         """
-        z_shift = self.surfaces[-1].geometry.cs.z
+        surfs_inverted = self.copy()
+        z_shift = be.copy(self.surfaces[-1].geometry.cs.z)
+        for surf in surfs_inverted.surfaces:
+            # scale radii by -1
+            surf.geometry.radius *= -1
 
-        surfs_inverted = [surf.invert(z_shift)
-                          for surf in reversed(self.surfaces)]
+            # invert z position
+            surf.geometry.cs.z = z_shift - surf.geometry.cs.z
+
+            # swap initial and final materials
+            temp = surf.material_pre
+            surf.material_pre = surf.material_post
+            surf.material_post = temp
 
         return SurfaceGroup(surfs_inverted)
 
