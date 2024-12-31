@@ -64,3 +64,17 @@ class ImageSurface(Surface):
             RealRays: The modified rays after interaction with the surface.
         """
         return rays
+
+    def copy(self):
+        """
+        Returns a copy of the surface.
+
+        Returns:
+            ImageSurface: The copied surface.
+        """
+        return ImageSurface(
+            geometry=self.geometry.copy(),
+            material_pre=self.material_pre.copy(),
+            aperture=self.aperture.copy()
+            if self.aperture is not None else None
+        )
