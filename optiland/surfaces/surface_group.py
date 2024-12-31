@@ -248,9 +248,9 @@ class SurfaceGroup:
             SurfaceGroup: The inverted surface group.
 
         """
-        surfs_inverted = self.copy()
+        surfs_inverted = [surf.copy() for surf in self.surfaces[::-1]]
         z_shift = be.copy(self.surfaces[-1].geometry.cs.z)
-        for surf in surfs_inverted.surfaces:
+        for surf in surfs_inverted:
             # scale radii by -1
             surf.geometry.radius *= -1
 
