@@ -87,7 +87,7 @@ class BaseGeometry(ABC):
         Returns:
             BaseGeometry: The copy of the geometry.
         """
-        return self.__class__(self.cs.copy())
+        return BaseGeometry(self.cs.copy())
 
     def to_dict(self):
         """Convert the geometry to a dictionary.
