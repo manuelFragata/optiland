@@ -113,7 +113,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
             be.copy(self.radius),
             be.copy(self.k),
             be.copy(self.tol),
-            self.max_iter,
+            be.copy(self.max_iter),
             be.copy(self.c)
         )
 
