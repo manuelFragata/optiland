@@ -4,7 +4,6 @@ This module provides a spot diagram analysis for optical systems.
 
 Kramer Harrison, 2024
 """
-from copy import deepcopy
 import matplotlib.pyplot as plt
 import optiland.backend as be
 
@@ -60,8 +59,17 @@ class SpotDiagram:
         if self.wavelengths == 'all':
             self.wavelengths = self.optic.wavelengths.get_wavelengths()
 
-        self.data = self._generate_data(self.fields, self.wavelengths,
-                                        num_rings, distribution)
+        result = self._generate_data(
+            self.fields,
+            self.wavelengths,
+            num_rays=num_rings,
+            distribution=distribution
+        )
+
+        self.data = result[0]
+        self.centroids = result[1]
+        self.geometric_spot_radius = result[2]
+        self.rms_spot_radius = result[3]
 
     def view(self, figsize=(12, 4)):
         """View the spot diagram
@@ -82,8 +90,8 @@ class SpotDiagram:
         axs = axs.flatten()
 
         # subtract centroid and find limits
-        data = self._prepare_data()
-        geometric_size = self.geometric_spot_radius()
+        data = self._prepare_data(self.data)
+        geometric_size = self.geometric_spot_radius
         axis_lim = be.max(be.array(geometric_size))
         axis_lim = be.to_numpy(axis_lim)
 
@@ -101,20 +109,6 @@ class SpotDiagram:
         plt.tight_layout()
         plt.show()
 
-    def centroid(self):
-        """Centroid of each spot
-
-        Returns:
-            centroid (List): centroid for each field in the data.
-        """
-        norm_index = self.optic.wavelengths.primary_index
-        centroid = []
-        for field_data in self.data:
-            centroid_x = be.mean(field_data[norm_index][0])
-            centroid_y = be.mean(field_data[norm_index][1])
-            centroid.append((centroid_x, centroid_y))
-        return centroid
-
     def geometric_spot_radius(self):
         """Geometric spot radius of each spot
 
@@ -122,15 +116,7 @@ class SpotDiagram:
             geometric_size (List): Geometric spot radius for field and
                 wavelength
         """
-        data = self._center_spots(deepcopy(self.data))
-        geometric_size = []
-        for field_data in data:
-            geometric_size_field = []
-            for wave_data in field_data:
-                r = be.sqrt(wave_data[0]**2 + wave_data[1]**2)
-                geometric_size_field.append(be.max(r))
-            geometric_size.append(geometric_size_field)
-        return geometric_size
+        return self.geometric_spot_radius
 
     def rms_spot_radius(self):
         """Root mean square (RMS) spot radius of each spot
@@ -138,34 +124,53 @@ class SpotDiagram:
         Returns:
             rms (List): RMS spot radius for each field and wavelength.
         """
-        data = self._center_spots(deepcopy(self.data))
+        return self.rms_spot_radius
+
+    @staticmethod
+    def _geometric_spot_radius(data, centroids):
+        """Geometric spot radius of each spot
+
+        Returns:
+            geometric_size (List): Geometric spot radius for field and
+                wavelength
+        """
+        geometric_size = []
+        for k, field_data in enumerate(data):
+            geometric_size_field = []
+            for wave_data in field_data:
+                x = wave_data[0] - centroids[k][0]
+                y = wave_data[1] - centroids[k][1]
+                r = be.sqrt(x**2 + y**2)
+                geometric_size_field.append(be.max(r))
+            geometric_size.append(geometric_size_field)
+        return geometric_size
+
+    @staticmethod
+    def _rms_spot_radius(data, centroids):
+        """Root mean square (RMS) spot radius of each spot
+
+        Returns:
+            rms (List): RMS spot radius for each field and wavelength.
+        """
         rms = []
-        for field_data in data:
+        for k, field_data in enumerate(data):
             rms_field = []
             for wave_data in field_data:
-                r2 = wave_data[0]**2 + wave_data[1]**2
+                x = wave_data[0] - centroids[k][0]
+                y = wave_data[1] - centroids[k][1]
+                r2 = x**2 + y**2
                 rms_field.append(be.sqrt(be.mean(r2)))
             rms.append(rms_field)
         return rms
 
-    def _center_spots(self, data):
-        """
-        Centers the spots in the given data around their respective centroids.
-
-        Args:
-            data (List): A nested list representing the data containing spots.
-
-        Returns:
-            data (List): A nested list with the spots centered around their
-                centroids.
-        """
-        centroids = self.centroid()
-        data = deepcopy(self.data)
-        for i, field_data in enumerate(data):
-            for wave_data in field_data:
-                wave_data[0] -= centroids[i][0]
-                wave_data[1] -= centroids[i][1]
-        return data
+    def _compute_centroids(self, data):
+        norm_index = self.optic.wavelengths.primary_index
+        centroids = []
+        for field_data in data:
+            centroid_x = be.mean(field_data[norm_index][0])
+            centroid_y = be.mean(field_data[norm_index][1])
+            centroids.append((centroid_x, centroid_y))
+        return centroids
 
     def _generate_data(self, fields, wavelengths, num_rays=100,
                        distribution='hexapolar'):
@@ -188,12 +193,18 @@ class SpotDiagram:
         for field in fields:
             field_data = []
             for wavelength in wavelengths:
-                field_data.append(self._generate_field_data(field,
-                                                            wavelength,
-                                                            num_rays,
-                                                            distribution))
+                field_data.append(
+                    self._generate_field_data(
+                        field, wavelength, num_rays, distribution
+                    )
+                )
             data.append(field_data)
-        return data
+
+        centroids = self._compute_centroids(data)
+        geo_spot_size = self._geometric_spot_radius(data, centroids)
+        rms_spot_size = self._rms_spot_radius(data, centroids)
+
+        return data, centroids, geo_spot_size, rms_spot_size
 
     def _generate_field_data(self, field, wavelength, num_rays=100,
                              distribution='hexapolar'):
@@ -251,15 +262,14 @@ class SpotDiagram:
             ax.set_ylim((-axis_lim*buffer, axis_lim*buffer))
         ax.set_title(f'Hx: {field[0]:.3f}, Hy: {field[1]:.3f}')
 
-    def _prepare_data(self):
+    def _prepare_data(self, data):
         """Prepare the data for visualization."""
-        data = self._center_spots(deepcopy(self.data))
         new_data = []
-        for field_data in data:
+        for k, field_data in enumerate(data):
             subdata = []
             for wave_data in field_data:
-                x = be.to_numpy(wave_data[0])
-                y = be.to_numpy(wave_data[1])
+                x = be.to_numpy(wave_data[0] - self.centroids[k][0])
+                y = be.to_numpy(wave_data[1] - self.centroids[k][1])
                 intensity = be.to_numpy(wave_data[2])
                 subdata.append([x, y, intensity])
             new_data.append(subdata)
