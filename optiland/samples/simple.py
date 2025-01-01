@@ -1,4 +1,4 @@
-import numpy as np
+import optiland.backend as be
 from optiland import optic
 
 
@@ -9,7 +9,7 @@ class Edmund_49_847(optic.Optic):
         super().__init__()
 
         # add surfaces
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, thickness=7, radius=19.93, is_stop=True,
                          material='N-SF11')
         self.add_surface(index=2, thickness=21.48)
@@ -39,7 +39,7 @@ class SingletStopSurf2(optic.Optic):
         super().__init__()
 
         # add surfaces
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, thickness=10.0, radius=63.73364157,
                          material='LAC9')
         self.add_surface(index=2, thickness=92.73834630, radius=653.29392320,
@@ -68,7 +68,7 @@ class TelescopeDoublet(optic.Optic):
     def __init__(self):
         super().__init__()
 
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, radius=29.32908, thickness=0.7,
                          material='N-BK7', is_stop=True)
         self.add_surface(index=2, radius=-20.06842, thickness=0.032)
@@ -102,7 +102,7 @@ class CementedAchromat(optic.Optic):
         super().__init__()
 
         # add surfaces
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, radius=12.38401, thickness=0.4340,
                          is_stop=True, material='N-BAK1')
         self.add_surface(index=2, radius=-7.94140, thickness=0.3210,
@@ -135,7 +135,7 @@ class AsphericSinglet(optic.Optic):
         super().__init__()
 
         # add surfaces
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, thickness=7, radius=20.0, is_stop=True,
                          material='N-SF11', surface_type='even_asphere',
                          conic=0.0,

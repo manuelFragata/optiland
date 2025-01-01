@@ -1,4 +1,4 @@
-import numpy as np
+import optiland.backend as be
 from optiland import optic
 
 
@@ -8,8 +8,8 @@ class EyepieceErfle(optic.Optic):
     def __init__(self):
         super().__init__()
 
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
-        self.add_surface(index=1, radius=np.inf, thickness=15.224,
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
+        self.add_surface(index=1, radius=be.inf, thickness=15.224,
                          is_stop=True)
         self.add_surface(index=2, radius=269.0, thickness=25.1,
                          material='L-BSL7')

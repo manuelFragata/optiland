@@ -1,4 +1,4 @@
-import numpy as np
+import optiland.backend as be
 from optiland import optic, materials
 
 
@@ -15,7 +15,7 @@ class InfraredTriplet(optic.Optic):
         # https://www.spectral-systems.com/technical-data-sheet/znse-zinc-selenide
         ZnSe = materials.IdealMaterial(n=2.4028)
 
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, radius=10.4578, thickness=0.5901,
                          material=germanium, is_stop=True)
         self.add_surface(index=2, radius=14.1079, thickness=4.3909)
@@ -51,7 +51,7 @@ class InfraredTripletF4(optic.Optic):
         germanium = materials.IdealMaterial(n=4.002)
         silicon = materials.IdealMaterial(n=3.4222)
 
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, radius=2.0721, thickness=0.1340,
                          material=silicon)
         self.add_surface(index=2, radius=3.5488, thickness=0.2392)

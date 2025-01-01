@@ -1,4 +1,4 @@
-import numpy as np
+import optiland.backend as be
 from optiland import optic, physical_apertures
 
 
@@ -10,10 +10,10 @@ class HubbleTelescope(optic.Optic):
     def __init__(self):
         super().__init__()
 
-        self.add_surface(index=0, radius=np.inf, thickness=np.inf)
+        self.add_surface(index=0, radius=be.inf, thickness=be.inf)
         self.add_surface(index=1, thickness=4910.01016)
 
-        obscuration = physical_apertures.RadialAperture(r_max=np.inf,
+        obscuration = physical_apertures.RadialAperture(r_max=be.inf,
                                                         r_min=177.80035)
 
         self.add_surface(index=2, radius=-11040.02286, thickness=-4910.01016,
