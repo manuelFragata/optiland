@@ -1,3 +1,8 @@
+"""
+This module provides a backend for numerical operations using torch.
+
+Kramer Harrison, 2024
+"""
 import contextlib
 import numpy as np
 import torch
