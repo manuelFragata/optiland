@@ -30,3 +30,7 @@ def default_rng(seed=None):
 
 def random_uniform(low=0.0, high=1.0, size=None, generator=None):
     return generator.uniform(low, high, size)
+
+
+def matrix_vector_multiply_and_squeeze(p, E, backend='numpy'):
+    return np.squeeze(np.matmul(p, E[:, :, np.newaxis]), axis=2)
