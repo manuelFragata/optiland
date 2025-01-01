@@ -1,3 +1,8 @@
+"""
+This module provides a backend for numerical operations using NumPy and SciPy.
+
+Kramer Harrison, 2024
+"""
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
