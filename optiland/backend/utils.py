@@ -1,3 +1,8 @@
+"""
+Utility functions for working with different backends.
+
+Kramer Harrison, 2024
+"""
 import numpy as np
 import torch
 
