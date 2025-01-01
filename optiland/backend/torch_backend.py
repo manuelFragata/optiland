@@ -212,3 +212,7 @@ def flip(x):
 
 def meshgrid(*arrays):
     return torch.meshgrid(*arrays, indexing='ij')
+
+
+def matrix_vector_multiply_and_squeeze(p, E):
+    return torch.matmul(p, E.unsqueeze(2)).squeeze(2)
