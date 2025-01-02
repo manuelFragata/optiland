@@ -232,38 +232,6 @@ class SurfaceGroup:
         for surface in self.surfaces:
             surface.reset()
 
-    def inverted(self):
-        """Generate inverted surface group.
-
-        This method generates an inverted surface group by performing the
-            following operations:
-            1. Reverses the order of the surfaces in the original surface
-                group.
-            2. Scales the radii of each surface by -1.
-            3. Inverts the z position of each surface by subtracting it from
-                the z position of the last surface.
-            4. Swaps the initial and final materials of each surface.
-
-        Returns:
-            SurfaceGroup: The inverted surface group.
-
-        """
-        surfs_inverted = [surf.copy() for surf in self.surfaces[::-1]]
-        z_shift = be.copy(self.surfaces[-1].geometry.cs.z)
-        for surf in surfs_inverted:
-            # scale radii by -1
-            surf.geometry.radius *= -1
-
-            # invert z position
-            surf.geometry.cs.z = z_shift - surf.geometry.cs.z
-
-            # swap initial and final materials
-            temp = surf.material_pre
-            surf.material_pre = surf.material_post
-            surf.material_post = temp
-
-        return SurfaceGroup(surfs_inverted)
-
     def set_fresnel_coatings(self):
         """
         Set Fresnel coatings on all surfaces in the group.
@@ -271,15 +239,6 @@ class SurfaceGroup:
         for surface in self.surfaces[1:-1]:
             if surface.material_pre != surface.material_post:
                 surface.set_fresnel_coating()
-
-    def copy(self):
-        """
-        Create a copy of the surface group.
-
-        Returns:
-            SurfaceGroup: The copy of the surface group.
-        """
-        return SurfaceGroup([surface.copy() for surface in self.surfaces])
 
     def to_dict(self):
         """
