@@ -5,7 +5,6 @@ properties of lens systems.
 
 Kramer Harrison, 2024
 """
-from optiland.rays import ParaxialRays
 import optiland.backend as be
 
 
@@ -363,9 +362,8 @@ class Paraxial:
 
         y0, z0 = self._get_object_position(Hy, y1, EPL)
         u0 = (y1 - y0) / (EPL - z0)
-        rays = ParaxialRays(y0, u0, z0, wavelength)
 
-        self.optic.surface_group.trace(rays)
+        self._trace_generic(y0, u0, z0, wavelength)
 
     def _trace_generic(self, y, u, z, wavelength, reverse=False, skip=0):
         """
@@ -385,19 +383,55 @@ class Paraxial:
             tuple: A tuple containing the final height(s) and slope(s) of the
                 rays after tracing.
         """
+        # TODO: this is a workaround to maintain performance while using
+        # a configurable backend. Move this to a dedicated tracer class.
         self._process_input(y)
         self._process_input(u)
         self._process_input(z)
 
+        R = self.optic.surface_group.radii  # radii of curvature
+        n = self.optic.n(wavelength)  # refractive index at wavelength
+        position = be.ravel(self.optic.surface_group.positions)  # z positions
+        surfaces = self.optic.surface_group.surfaces  # surface types
+        num_surfaces = len(surfaces)
+
         if reverse:
-            surfaces = self.surfaces.inverted()
-        else:
-            surfaces = self.surfaces
+            R = -R[::-1]
+            n = be.concatenate((n[::-1][1:], [n[0]]))
+            position = be.abs(position[::-1] - position[::-1][0])
+            surfaces = surfaces[::-1]
 
-        rays = ParaxialRays(y, u, z, wavelength)
-        surfaces.trace(rays, skip)
+        t = be.abs(be.diff(position))
+        t[be.isinf(t)] = 0.0
 
-        return surfaces.y, surfaces.u
+        power = (n[1:] - n[:-1]) / R[1:]
+
+        y_out = [be.array([y])]
+        u_out = [be.array([u])]
+
+        for i in range(skip, num_surfaces):
+            if be.isinf(position[i]):
+                continue
+
+            shift = position[i] - z
+            z = position[i]
+
+            if reverse:
+                y = y + t[i] * u
+            else:
+                y = y + shift * u
+
+            if surfaces[i].is_reflective:
+                u = -u - 2 * y / R[i]
+            else:
+                n1, n2 = (n[i], n[i + 1]) if reverse else (n[i - 1], n[i])
+                power_index = i if reverse else i - 1
+                u = (n1 * u - y * power[power_index]) / n2
+
+            y_out.append(be.array([y]))
+            u_out.append(be.array([u]))
+
+        return be.array(y_out), be.array(u_out)
 
     def _process_input(self, x):
         """
