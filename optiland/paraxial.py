@@ -53,7 +53,7 @@ class Paraxial:
         z_start = -1
         wavelength = self.optic.primary_wavelength
         y, u = self.tracer.trace_generic(1.0, 0.0, z_start, wavelength,
-                                         reverse=True, skip=1)
+                                         reverse=True)
         f1 = y[0] / u[-1]
         return f1[0]
 
@@ -80,7 +80,7 @@ class Paraxial:
         z_start = -1
         wavelength = self.optic.primary_wavelength
         y, u = self.tracer.trace_generic(1.0, 0.0, z_start, wavelength,
-                                         reverse=True, skip=1)
+                                         reverse=True)
         F1 = y[-1] / u[-1]
         return F1[0]
 
@@ -240,7 +240,7 @@ class Paraxial:
         '''
         _, ua = self.marginal_ray()
         n = self.optic.n()
-        mag = n[0]*ua[0]/(n[-1]*ua[-1])
+        mag = n[0] * ua[0] / (n[-1] * ua[-1])
         return mag[0]
 
     def invariant(self):
