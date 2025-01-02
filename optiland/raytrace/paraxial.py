@@ -34,7 +34,7 @@ class ParaxialRayTracer:
         y0, z0 = self._get_object_position(Hy, y1, EPL)
         u0 = (y1 - y0) / (EPL - z0)
 
-        self.trace_generic(y0, u0, z0, wavelength)
+        return self.trace_generic(y0, u0, z0, wavelength)
 
     def trace_generic(self, y, u, z, wavelength, reverse=False, skip=0):
         """
