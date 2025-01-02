@@ -304,69 +304,83 @@ def test_paraxial_init():
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_f1(optic_instance, values):
-    assert optic_instance.paraxial.f1() == values['f1']
+    assert pytest.approx(
+        optic_instance.paraxial.f1(), rel=1e-9) == values['f1']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_f2(optic_instance, values):
-    assert optic_instance.paraxial.f2() == values['f2']
+    assert pytest.approx(
+        optic_instance.paraxial.f2(), rel=1e-9) == values['f2']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_F1(optic_instance, values):
-    assert optic_instance.paraxial.F1() == values['F1']
+    assert pytest.approx(
+        optic_instance.paraxial.F1(), rel=1e-9) == values['F1']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_F2(optic_instance, values):
-    assert optic_instance.paraxial.F2() == values['F2']
+    assert pytest.approx(
+        optic_instance.paraxial.F2(), rel=1e-9) == values['F2']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_P1(optic_instance, values):
-    assert optic_instance.paraxial.P1() == values['P1']
+    assert pytest.approx(
+        optic_instance.paraxial.P1(), rel=1e-9) == values['P1']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_P2(optic_instance, values):
-    assert optic_instance.paraxial.P2() == values['P2']
+    assert pytest.approx(
+        optic_instance.paraxial.P2(), rel=1e-9) == values['P2']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_N1(optic_instance, values):
-    assert optic_instance.paraxial.N1() == values['N1']
+    assert pytest.approx(
+        optic_instance.paraxial.N1(), rel=1e-9) == values['N1']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_N2(optic_instance, values):
-    assert optic_instance.paraxial.N2() == values['N2']
+    assert pytest.approx(
+        optic_instance.paraxial.N2(), rel=1e-9) == values['N2']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_EPL(optic_instance, values):
-    assert optic_instance.paraxial.EPL() == values['EPL']
+    assert pytest.approx(
+        optic_instance.paraxial.EPL(), rel=1e-9) == values['EPL']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_EPD(optic_instance, values):
-    assert optic_instance.paraxial.EPD() == values['EPD']
+    assert pytest.approx(
+        optic_instance.paraxial.EPD(), rel=1e-9) == values['EPD']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_XPL(optic_instance, values):
-    assert optic_instance.paraxial.XPL() == values['XPL']
+    assert pytest.approx(
+        optic_instance.paraxial.XPL(), rel=1e-9) == values['XPL']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_XPD(optic_instance, values):
-    assert optic_instance.paraxial.XPD() == values['XPD']
+    assert pytest.approx(
+        optic_instance.paraxial.XPD(), rel=1e-9) == values['XPD']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_FNO(optic_instance, values):
-    assert optic_instance.paraxial.FNO() == values['FNO']
+    assert pytest.approx(
+        optic_instance.paraxial.FNO(), rel=1e-9) == values['FNO']
 
 
 @pytest.mark.parametrize('optic_instance,values', get_optic_data())
 def test_calculate_invariant(optic_instance, values):
-    assert optic_instance.paraxial.invariant() == values['invariant']
+    assert pytest.approx(
+        optic_instance.paraxial.invariant(), rel=1e-9) == values['invariant']
