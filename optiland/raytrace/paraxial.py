@@ -1,4 +1,3 @@
-from optiland.rays.paraxial_rays import ParaxialRays
 import optiland.backend as be
 
 
@@ -104,6 +103,53 @@ class ParaxialRayTracer:
             u_out.append(be.array([u]))
 
         return be.array(y_out), be.array(u_out)
+
+    def _get_object_position(self, Hy, y1, EPL):
+        """
+        Calculate the position of the object in the paraxial optical system.
+
+        Args:
+            Hy (float): The normalized field height.
+            y1 (ndarray): The initial y-coordinate of the ray.
+            EPL (float): The effective focal length of the lens.
+
+        Returns:
+            tuple: A tuple containing the y and z coordinates of the object
+                position.
+
+        Raises:
+            ValueError: If the field type is "object_height" and the object is
+                at infinity.
+        """
+        obj = self.optic.object_surface
+        field_y = self.optic.fields.max_field * Hy
+
+        if obj.is_infinite:
+            if self.optic.field_type == 'object_height':
+                raise ValueError('Field type cannot be "object_height" for an '
+                                 'object at infinity.')
+
+            y = -be.tan(be.deg2rad(field_y)) * EPL
+            z = self.optic.surface_group.positions[1]
+
+            y0 = y1 + y
+            z0 = be.ones_like(y1) * z
+        else:
+            if self.optic.field_type == 'object_height':
+                y = -field_y
+                z = obj.geometry.cs.z
+
+                y0 = be.ones_like(y1) * y
+                z0 = be.ones_like(y1) * z
+
+            elif self.optic.field_type == 'angle':
+                y = -be.tan(be.deg2rad(field_y))
+                z = self.optic.surface_group.positions[0]
+
+                y0 = y1 + y
+                z0 = be.ones_like(y1) * z
+
+        return y0, z0
 
     def _process_input(self, x):
         """
