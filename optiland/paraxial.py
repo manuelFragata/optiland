@@ -31,6 +31,18 @@ class Paraxial:
         self.surfaces = self.optic.surface_group
         self.tracer = ParaxialRayTracer(optic)
 
+    def trace(self, Hy, Py, wavelength):
+        """
+        Trace paraxial ray through the optical system based on specified field
+        and pupil coordinates.
+
+        Args:
+            Hy (float): Normalized field coordinate.
+            Py (float): Normalized pupil coordinate.
+            wavelength (float): Wavelength of the light.
+        """
+        return self.tracer.trace(Hy, Py, wavelength)
+
     def f1(self):
         """Calculate the front focal length
 
