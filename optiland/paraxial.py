@@ -35,11 +35,11 @@ class Paraxial:
         Returns:
             float: front focal length
         """
-        surfaces = self.surfaces.inverted()
         # start tracing 1 lens unit before first surface
-        z_start = surfaces.positions[0] - 1
+        z_start = -1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength, reverse=True)
+        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength,
+                                   reverse=True, skip=1)
         f1 = y[0] / u[-1]
         return f1[0]
 
@@ -62,11 +62,11 @@ class Paraxial:
         Returns:
             float: front focal point location
         """
-        surfaces = self.surfaces.inverted()
         # start tracing 1 lens unit before first surface
-        z_start = surfaces.positions[0] - 1
+        z_start = -1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength, reverse=True)
+        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength,
+                                   reverse=True, skip=1)
         F1 = y[-1] / u[-1]
         return F1[0]
 
@@ -126,13 +126,13 @@ class Paraxial:
         if stop_index == 0:
             return self.surfaces.positions[1]
 
-        surfaces = self.surfaces.inverted()
-        stop_index = surfaces.stop_index
+        num_surfaces = len(self.surfaces.surfaces)
+        stop_index = num_surfaces - stop_index - 1
 
         y0 = 0
         u0 = 0.1
         # trace from center of stop on axis
-        z0 = surfaces.positions[stop_index]
+        z0 = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
 
         y, u = self._trace_generic(y0, u0, z0, wavelength, reverse=True,
@@ -267,13 +267,14 @@ class Paraxial:
         Returns:
             tuple: chief ray heights and angles as type np.ndarray
         """
-        surfaces = self.surfaces.inverted()
-        stop_index = surfaces.stop_index
+        stop_index = self.surfaces.stop_index
+        num_surfaces = len(self.surfaces.surfaces)
+        stop_index = num_surfaces - stop_index - 1
 
         y0 = 0
         u0 = 0.1
         # trace from center of stop on axis
-        z0 = surfaces.positions[stop_index]
+        z0 = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
 
         y, u = self._trace_generic(y0, u0, z0, wavelength, reverse=True,
