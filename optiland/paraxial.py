@@ -6,6 +6,7 @@ properties of lens systems.
 Kramer Harrison, 2024
 """
 import optiland.backend as be
+from optiland.raytrace import ParaxialRayTracer
 
 
 class Paraxial:
@@ -28,6 +29,7 @@ class Paraxial:
     def __init__(self, optic):
         self.optic = optic
         self.surfaces = self.optic.surface_group
+        self.tracer = ParaxialRayTracer(optic)
 
     def f1(self):
         """Calculate the front focal length
@@ -38,8 +40,8 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = -1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength,
-                                   reverse=True, skip=1)
+        y, u = self.tracer.trace_generic(1.0, 0.0, z_start, wavelength,
+                                         reverse=True, skip=1)
         f1 = y[0] / u[-1]
         return f1[0]
 
@@ -52,7 +54,7 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = self.surfaces.positions[1] - 1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start[0], wavelength)
+        y, u = self.tracer.trace_generic(1.0, 0.0, z_start[0], wavelength)
         f2 = -y[0] / u[-1]
         return be.abs(f2[0])
 
@@ -65,8 +67,8 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = -1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength,
-                                   reverse=True, skip=1)
+        y, u = self.tracer.trace_generic(1.0, 0.0, z_start, wavelength,
+                                         reverse=True, skip=1)
         F1 = y[-1] / u[-1]
         return F1[0]
 
@@ -79,7 +81,7 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = self.surfaces.positions[1] - 1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start[0], wavelength)
+        y, u = self.tracer.trace_generic(1.0, 0.0, z_start[0], wavelength)
         F2 = -y[-1] / u[-1]
         return F2[0]
 
@@ -135,8 +137,8 @@ class Paraxial:
         z0 = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
 
-        y, u = self._trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                   skip=stop_index+1)
+        y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
+                                         skip=stop_index+1)
 
         loc_relative = y[-1] / u[-1]
         try:
@@ -182,8 +184,8 @@ class Paraxial:
 
         z_start = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(0.0, 0.1, z_start[0], wavelength,
-                                   skip=stop_index+1)
+        y, u = self.tracer.trace_generic(0.0, 0.1, z_start[0], wavelength,
+                                         skip=stop_index+1)
 
         loc_relative = -y[-1] / u[-1]
         return loc_relative[0]
@@ -259,7 +261,7 @@ class Paraxial:
             ua = EPD / (2 * z)
 
         wavelength = self.optic.primary_wavelength
-        return self._trace_generic(ya, ua, obj_z[0], wavelength)
+        return self.tracer.trace_generic(ya, ua, obj_z[0], wavelength)
 
     def chief_ray(self):
         """Find the chief ray heights and angles
@@ -277,8 +279,8 @@ class Paraxial:
         z0 = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
 
-        y, u = self._trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                   skip=stop_index+1)
+        y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
+                                         skip=stop_index+1)
 
         max_field = self.optic.fields.max_y_field
 
@@ -287,13 +289,14 @@ class Paraxial:
         elif self.optic.field_type == 'angle':
             u1 = 0.1 * be.tan(be.deg2rad(max_field)) / u[-1]
 
-        yn, un = self._trace_generic(y0, u1[0], z0[0], wavelength,
-                                     reverse=True, skip=stop_index+1)
+        yn, un = self.tracer.trace_generic(y0, u1[0], z0[0], wavelength,
+                                           reverse=True, skip=stop_index+1)
 
         # trace in forward direction
         z0 = self.surfaces.positions[1]
 
-        return self._trace_generic(-y[-1, 0], un[-1, 0], z0[0], wavelength)
+        return self.tracer.trace_generic(-y[-1, 0], un[-1, 0], z0[0],
+                                         wavelength)
 
     def _get_object_position(self, Hy, y1, EPL):
         """
@@ -341,110 +344,3 @@ class Paraxial:
                 z0 = be.ones_like(y1) * z
 
         return y0, z0
-
-    def trace(self, Hy, Py, wavelength):
-        """
-        Trace paraxial ray through the optical system based on specified field
-        and pupil coordinates.
-
-        Args:
-            Hy (float): Normalized field coordinate.
-            Py (float): Normalized pupil coordinate.
-            wavelength (float): Wavelength of the light.
-        """
-        Hy = self._process_input(Hy)
-        Py = self._process_input(Py)
-        wavelength = self._process_input(wavelength)
-
-        EPL = self.EPL()
-        EPD = self.EPD()
-
-        y1 = Py * EPD / 2
-
-        y0, z0 = self._get_object_position(Hy, y1, EPL)
-        u0 = (y1 - y0) / (EPL - z0)
-
-        self._trace_generic(y0, u0, z0, wavelength)
-
-    def _trace_generic(self, y, u, z, wavelength, reverse=False, skip=0):
-        """
-        Trace generically-defined paraxial rays through the optical system.
-
-        Args:
-            y (float or array-like): The initial height(s) of the rays.
-            u (float or array-like): The initial slope(s) of the rays.
-            z (float or array-like): The initial axial position(s) of the rays.
-            wavelength (float): The wavelength of the rays.
-            reverse (bool, optional): If True, trace the rays in reverse
-                direction. Defaults to False.
-            skip (int, optional): The number of surfaces to skip during
-                tracing. Defaults to 0.
-
-        Returns:
-            tuple: A tuple containing the final height(s) and slope(s) of the
-                rays after tracing.
-        """
-        # TODO: this is a workaround to maintain performance while using
-        # a configurable backend. Move this to a dedicated tracer class.
-        self._process_input(y)
-        self._process_input(u)
-        self._process_input(z)
-
-        R = self.optic.surface_group.radii  # radii of curvature
-        n = self.optic.n(wavelength)  # refractive index at wavelength
-        position = be.ravel(self.optic.surface_group.positions)  # z positions
-        surfaces = self.optic.surface_group.surfaces  # surface types
-        num_surfaces = len(surfaces)
-
-        if reverse:
-            R = -R[::-1]
-            n = be.concatenate((n[::-1][1:], [n[0]]))
-            position = be.abs(position[::-1] - position[::-1][0])
-            surfaces = surfaces[::-1]
-
-        t = be.abs(be.diff(position))
-        t[be.isinf(t)] = 0.0
-
-        power = (n[1:] - n[:-1]) / R[1:]
-
-        y_out = [be.array([y])]
-        u_out = [be.array([u])]
-
-        for i in range(skip, num_surfaces):
-            if be.isinf(position[i]):
-                continue
-
-            shift = position[i] - z
-            z = position[i]
-
-            if reverse:
-                y = y + t[i] * u
-            else:
-                y = y + shift * u
-
-            if surfaces[i].is_reflective:
-                u = -u - 2 * y / R[i]
-            else:
-                n1, n2 = (n[i], n[i + 1]) if reverse else (n[i - 1], n[i])
-                power_index = i if reverse else i - 1
-                u = (n1 * u - y * power[power_index]) / n2
-
-            y_out.append(be.array([y]))
-            u_out.append(be.array([u]))
-
-        return be.array(y_out), be.array(u_out)
-
-    def _process_input(self, x):
-        """
-        Process input to ensure it is a numpy array.
-
-        Args:
-            x (float or array-like): The input to process.
-
-        Returns:
-            np.ndarray: The processed input.
-        """
-        if isinstance(x, (int, float)):
-            return be.array([x])
-        else:
-            return be.array(x)
