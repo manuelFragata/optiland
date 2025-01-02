@@ -52,7 +52,7 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = self.surfaces.positions[1] - 1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength)
+        y, u = self._trace_generic(1.0, 0.0, z_start[0], wavelength)
         f2 = -y[0] / u[-1]
         return be.abs(f2[0])
 
@@ -79,7 +79,7 @@ class Paraxial:
         # start tracing 1 lens unit before first surface
         z_start = self.surfaces.positions[1] - 1
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(1.0, 0.0, z_start, wavelength)
+        y, u = self._trace_generic(1.0, 0.0, z_start[0], wavelength)
         F2 = -y[-1] / u[-1]
         return F2[0]
 
@@ -182,7 +182,7 @@ class Paraxial:
 
         z_start = self.surfaces.positions[stop_index]
         wavelength = self.optic.primary_wavelength
-        y, u = self._trace_generic(0.0, 0.1, z_start, wavelength,
+        y, u = self._trace_generic(0.0, 0.1, z_start[0], wavelength,
                                    skip=stop_index+1)
 
         loc_relative = -y[-1] / u[-1]
@@ -259,7 +259,7 @@ class Paraxial:
             ua = EPD / (2 * z)
 
         wavelength = self.optic.primary_wavelength
-        return self._trace_generic(ya, ua, obj_z, wavelength)
+        return self._trace_generic(ya, ua, obj_z[0], wavelength)
 
     def chief_ray(self):
         """Find the chief ray heights and angles
@@ -287,13 +287,13 @@ class Paraxial:
         elif self.optic.field_type == 'angle':
             u1 = 0.1 * be.tan(be.deg2rad(max_field)) / u[-1]
 
-        yn, un = self._trace_generic(y0, u1, z0, wavelength, reverse=True,
-                                     skip=stop_index+1)
+        yn, un = self._trace_generic(y0, u1[0], z0[0], wavelength,
+                                     reverse=True, skip=stop_index+1)
 
         # trace in forward direction
         z0 = self.surfaces.positions[1]
 
-        return self._trace_generic(-yn[-1], un[-1], z0, wavelength)
+        return self._trace_generic(-y[-1, 0], un[-1, 0], z0[0], wavelength)
 
     def _get_object_position(self, Hy, y1, EPL):
         """
