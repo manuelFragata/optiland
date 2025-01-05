@@ -1,4 +1,5 @@
 import optiland.backend as be
+from optiland.surfaces import ObjectSurface
 
 
 class ParaxialRayTracer:
@@ -54,55 +55,50 @@ class ParaxialRayTracer:
             tuple: A tuple containing the final height(s) and slope(s) of the
                 rays after tracing.
         """
-        # TODO: this is a workaround to maintain performance while using
-        # a configurable backend. Move this to a dedicated tracer class.
-        self._process_input(y)
-        self._process_input(u)
-        self._process_input(z)
+        y = self._process_input(y)
+        u = self._process_input(u)
+        z = self._process_input(z)
 
-        R = self.optic.surface_group.radii  # radii of curvature
-        n = self.optic.n(wavelength)  # refractive index at wavelength
-        position = be.ravel(self.optic.surface_group.positions)  # z positions
-        surfaces = self.optic.surface_group.surfaces  # surface types
-        num_surfaces = len(surfaces)
+        R = self.optic.surface_group.radii
+        n = self.optic.n(wavelength)
+        pos = be.ravel(self.optic.surface_group.positions)
+        surfs = self.optic.surface_group.surfaces
 
         if reverse:
             R = -R[::-1]
-            n = be.concatenate((n[::-1][1:], [n[0]]))
-            position = be.abs(position[::-1] - position[::-1][0])
-            surfaces = surfaces[::-1]
+            n = be.roll(n, shift=1)[::-1]
+            pos = pos[-1] - pos[::-1]
+            surfs = surfs[::-1]
 
-        t = be.abs(be.diff(position))
-        t[be.isinf(t)] = 0.0
+        power = be.diff(n, prepend=be.array([1])) / R
 
-        power = (n[1:] - n[:-1]) / R[1:]
+        heights = []
+        slopes = []
 
-        y_out = [be.array([y])]
-        u_out = [be.array([u])]
-
-        for i in range(skip, num_surfaces):
-            if be.isinf(position[i]):
+        for k in range(skip, len(R)):
+            if isinstance(surfs[k], ObjectSurface):
+                heights.append(be.copy(y))
+                slopes.append(be.copy(u))
                 continue
 
-            shift = position[i] - z
-            z = position[i]
+            # propagate to surface
+            t = pos[k] - z
+            z = pos[k]
+            y = y + t * u
 
-            if reverse:
-                y = y + t[i] * u
+            # reflect or refract
+            if surfs[k].is_reflective:
+                u = -u - 2 * y / R[k]
             else:
-                y = y + shift * u
+                u = 1 / n[k] * (n[k-1] * u - y * power[k])
 
-            if surfaces[i].is_reflective:
-                u = -u - 2 * y / R[i]
-            else:
-                n1, n2 = (n[i], n[i + 1]) if reverse else (n[i - 1], n[i])
-                power_index = i if reverse else i - 1
-                u = (n1 * u - y * power[power_index]) / n2
+            heights.append(be.copy(y))
+            slopes.append(be.copy(u))
 
-            y_out.append(be.array([y]))
-            u_out.append(be.array([u]))
+        heights = be.array(heights)
+        slopes = be.array(slopes)
 
-        return be.array(y_out), be.array(u_out)
+        return heights, slopes
 
     def _get_object_position(self, Hy, y1, EPL):
         """
