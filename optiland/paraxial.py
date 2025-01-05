@@ -140,15 +140,13 @@ class Paraxial:
         if stop_index == 0:
             return self.surfaces.positions[1]
 
-        num_surfaces = len(self.surfaces.surfaces)
-        stop_index = num_surfaces - stop_index - 1
-
         y0 = 0
         u0 = 0.1
-        # trace from center of stop on axis
-        z0 = self.surfaces.positions[stop_index]
+        pos = self.surfaces.positions
+        z0 = pos[-1] - pos[stop_index]
         wavelength = self.optic.primary_wavelength
 
+        # trace from center of stop on axis
         y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
                                          skip=stop_index)
 
