@@ -150,7 +150,7 @@ class Paraxial:
         wavelength = self.optic.primary_wavelength
 
         y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                         skip=stop_index+1)
+                                         skip=stop_index)
 
         loc_relative = y[-1] / u[-1]
         try:
@@ -281,18 +281,16 @@ class Paraxial:
         Returns:
             tuple: chief ray heights and angles as type np.ndarray
         """
-        stop_index = self.surfaces.stop_index
-        num_surfaces = len(self.surfaces.surfaces)
-        stop_index = num_surfaces - stop_index - 1
-
+        stop_index = self.optic.surface_group.stop_index
         y0 = 0
         u0 = 0.1
-        # trace from center of stop on axis
-        z0 = self.surfaces.positions[stop_index]
+        pos = self.optic.surface_group.positions
+        z0 = pos[-1] - pos[stop_index]
         wavelength = self.optic.primary_wavelength
 
+        # trace from center of stop on axis
         y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                         skip=stop_index+1)
+                                         skip=stop_index)
 
         max_field = self.optic.fields.max_y_field
 
@@ -301,11 +299,11 @@ class Paraxial:
         elif self.optic.field_type == 'angle':
             u1 = 0.1 * be.tan(be.deg2rad(max_field)) / u[-1]
 
-        yn, un = self.tracer.trace_generic(y0, u1[0], z0[0], wavelength,
-                                           reverse=True, skip=stop_index+1)
+        yn, un = self.tracer.trace_generic(y0, u1, z0, wavelength,
+                                           reverse=True, skip=stop_index)
 
         # trace in forward direction
-        z0 = self.surfaces.positions[1]
+        z0 = self.optic.surface_group.positions[1]
 
-        return self.tracer.trace_generic(-y[-1, 0], un[-1, 0], z0[0],
+        return self.tracer.trace_generic(-yn[-1, 0], un[-1, 0], z0[0],
                                          wavelength)
