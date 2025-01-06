@@ -136,8 +136,8 @@ class StandardGeometry(BaseGeometry):
         """
         geometry_dict = super().to_dict()
         geometry_dict.update({
-            'radius': self.radius,
-            'conic': self.k
+            'radius': float(self.radius),
+            'conic': float(self.k)
         })
         return geometry_dict
 
