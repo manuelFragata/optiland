@@ -35,8 +35,10 @@ class EncircledEnergy(SpotDiagram):
         self.num_points = num_points
         if wavelength == 'primary':
             wavelength = optic.primary_wavelength
+        norm_index = 0
 
-        super().__init__(optic, fields, [wavelength], num_rays, distribution)
+        super().__init__(optic, fields, [wavelength], num_rays, distribution,
+                         norm_index)
 
     def view(self, figsize=(7, 4.5)):
         """
