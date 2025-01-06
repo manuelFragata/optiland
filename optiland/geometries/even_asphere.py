@@ -109,7 +109,7 @@ class EvenAsphere(NewtonRaphsonGeometry):
             dict: The dictionary representation of the geometry.
         """
         data = super().to_dict()
-        data["coefficients"] = self.c
+        data["coefficients"] = self.c.tolist()
 
         return data
 
