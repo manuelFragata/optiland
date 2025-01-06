@@ -4,10 +4,8 @@ This module provides an encircled energy analysis for optical systems.
 
 Kramer Harrison, 2024
 """
-from copy import deepcopy
 import numpy as np
 import matplotlib.pyplot as plt
-import optiland.backend as be
 from optiland.analysis.spot_diagram import SpotDiagram
 
 
@@ -51,9 +49,8 @@ class EncircledEnergy(SpotDiagram):
         fig, ax = plt.subplots(figsize=figsize)
 
         # prepare data for plotting
-        data = self._prepare_data()
+        data = self._prepare_data(self.data)
 
-        data = self._center_spots(deepcopy(data))
         geometric_size = self.geometric_spot_radius()
         axis_lim = np.max(geometric_size)
         for k, field_data in enumerate(data):
@@ -68,21 +65,6 @@ class EncircledEnergy(SpotDiagram):
         ax.set_ylim((0, None))
         fig.tight_layout()
         plt.show()
-
-    def centroid(self):
-        """
-        Calculate the centroid of the Encircled Energy.
-
-        Returns:
-            list: A list of tuples representing the centroid coordinates for
-                each field.
-        """
-        centroid = []
-        for field_data in self.data:
-            centroid_x = be.mean(field_data[0][0])
-            centroid_y = be.mean(field_data[0][1])
-            centroid.append((centroid_x, centroid_y))
-        return centroid
 
     def _plot_field(self, ax, field_data, field, axis_lim,
                     num_points, buffer=1.2):
@@ -129,21 +111,3 @@ class EncircledEnergy(SpotDiagram):
         intensity = self.optic.surface_group.intensity[-1, :]
 
         return [x, y, intensity]
-
-    def _prepare_data(self):
-        """
-        Prepare the data for plotting.
-
-        Returns:
-            list: List of field data.
-        """
-        data = []
-        for field_data in self.data:
-            subdata = []
-            for wave_data in field_data:
-                x = be.to_numpy(wave_data[0])
-                y = be.to_numpy(wave_data[1])
-                intensity = be.to_numpy(wave_data[2])
-                subdata.append([x, y, intensity])
-            data.append(subdata)
-        return data
