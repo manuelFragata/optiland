@@ -5,7 +5,7 @@ This module computes first and third order aberrations of optical systems.
 Kramer Harrison, 2023
 """
 
-import numpy as np
+import optiland.backend as be
 
 
 class Aberrations:
@@ -73,16 +73,16 @@ class Aberrations:
 
         S = self._sum_seidels([TSC, CC, TAC, TPC, DC])
 
-        TSC = np.array(TSC).flatten()
-        CC = np.array(CC).flatten()
-        TAC = np.array(TAC).flatten()
-        TPC = np.array(TPC).flatten()
-        DC = np.array(DC).flatten()
-        TAchC = np.array(TAchC).flatten()
-        TchC = np.array(TchC).flatten()
-        AC = np.array(AC).flatten()
-        PC = np.array(PC).flatten()
-        LchC = np.array(LchC).flatten()
+        TSC = be.ravel(be.array(TSC))
+        CC = be.ravel(be.array(CC))
+        TAC = be.ravel(be.array(TAC))
+        TPC = be.ravel(be.array(TPC))
+        DC = be.ravel(be.array(DC))
+        TAchC = be.ravel(be.array(TAchC))
+        TchC = be.ravel(be.array(TchC))
+        AC = be.ravel(be.array(AC))
+        PC = be.ravel(be.array(PC))
+        LchC = be.ravel(be.array(LchC))
 
         return TSC, SC, CC, CC*3, TAC, AC, TPC, PC, DC, TAchC, LchC, TchC, S
 
@@ -108,7 +108,7 @@ class Aberrations:
         TSC = []
         for k in range(1, self._N-1):
             TSC.append(self._TSC_term(k))
-        return np.array(TSC).flatten()
+        return be.ravel(be.array(TSC))
 
     def SC(self):
         """Compute third-order longitudinal spherical aberration
@@ -123,7 +123,7 @@ class Aberrations:
         for k in range(1, self._N-1):
             TSC.append(self._TSC_term(k))
             SC.append(-TSC[-1] / self._ua[-1])
-        return np.array(SC).flatten()
+        return be.ravel(be.array(SC))
 
     def CC(self):
         """Compute third-order sagittal coma
@@ -136,7 +136,7 @@ class Aberrations:
         CC = []
         for k in range(1, self._N-1):
             CC.append(self._CC_term(k))
-        return np.array(CC).flatten()
+        return be.ravel(be.array(CC))
 
     def TCC(self):
         """Compute third-order tangential coma
@@ -158,7 +158,7 @@ class Aberrations:
         for k in range(1, self._N-1):
             TAC.append(self._TAC_term(k))
 
-        return np.array(TAC).flatten()
+        return be.ravel(be.array(TAC))
 
     def AC(self):
         """Compute third-order longitudinal astigmatism
@@ -173,7 +173,7 @@ class Aberrations:
         for k in range(1, self._N-1):
             TAC.append(self._TAC_term(k))
             AC.append(-TAC[-1] / self._ua[-1])
-        return np.array(AC).flatten()
+        return be.ravel(be.array(AC))
 
     def TPC(self):
         """Compute third-order transverse Petzval sum
@@ -186,7 +186,7 @@ class Aberrations:
         TPC = []
         for k in range(1, self._N-1):
             TPC.append(self._TPC_term(k))
-        return np.array(TPC).flatten()
+        return be.ravel(be.array(TPC))
 
     def PC(self):
         """Compute third-order longitudinal Petzval sum
@@ -201,7 +201,7 @@ class Aberrations:
         for k in range(1, self._N-1):
             TPC.append(self._TPC_term(k))
             PC.append(-TPC[-1] / self._ua[-1])
-        return np.array(PC).flatten()
+        return be.ravel(be.array(PC))
 
     def DC(self):
         """Compute third-order distortion
@@ -214,7 +214,7 @@ class Aberrations:
         DC = []
         for k in range(1, self._N-1):
             DC.append(self._DC_term(k))
-        return np.array(DC).flatten()
+        return be.ravel(be.array(DC))
 
     def TAchC(self):
         """Compute first-order transverse axial color
@@ -227,7 +227,7 @@ class Aberrations:
         TAchC = []
         for k in range(1, self._N-1):
             TAchC.append(self._TAchC_term(k))
-        return np.array(TAchC).flatten()
+        return be.ravel(be.array(TAchC))
 
     def LchC(self):
         """Compute first-order longitudinal axial color
@@ -242,7 +242,7 @@ class Aberrations:
         for k in range(1, self._N-1):
             TAchC.append(self._TAchC_term(k))
             LchC.append(-TAchC[-1] / self._ua[-1])
-        return np.array(LchC).flatten()
+        return be.ravel(be.array(LchC))
 
     def TchC(self):
         """Compute first-order lateral color
@@ -255,7 +255,7 @@ class Aberrations:
         TchC = []
         for k in range(1, self._N-1):
             TchC.append(self._TchC_term(k))
-        return np.array(TchC).flatten()
+        return be.ravel(be.array(TchC))
 
     def _TAchC_term(self, k):
         """Compute first-order transverse axial color term"""
@@ -305,10 +305,10 @@ class Aberrations:
         self._hp = self._inv / (self._n[-1] * self._ua[-1])
         self._dn = self.optic.n(0.4861) - self.optic.n(0.6563)
 
-        self._i = np.zeros(self._N-2)
-        self._ip = np.zeros(self._N-2)
-        self._B = np.zeros(self._N-2)
-        self._Bp = np.zeros(self._N-2)
+        self._i = be.zeros(self._N-2)
+        self._ip = be.zeros(self._N-2)
+        self._B = be.zeros(self._N-2)
+        self._Bp = be.zeros(self._N-2)
 
         for k in range(1, self._N-1):
             self._i[k-1] = (self._C[k] * self._ya[k] + self._ua[k-1])[0]
@@ -350,7 +350,7 @@ class Aberrations:
     def _sum_seidels(self, seidels):
         """Sum the Seidel aberration coefficients"""
         TSC, CC, TAC, TPC, DC = seidels
-        S = np.array([-sum(TSC) * self._n[-1] * self._ua[-1]*2,
+        S = be.array([-sum(TSC) * self._n[-1] * self._ua[-1]*2,
                       -sum(CC) * self._n[-1] * self._ua[-1]*2,
                       -sum(TAC) * self._n[-1] * self._ua[-1]*2,
                       -sum(TPC) * self._n[-1] * self._ua[-1]*2,
