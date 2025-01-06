@@ -94,15 +94,6 @@ class BaseCoating(ABC):
         """
         pass  # pragma: no cover
 
-    def copy(self):
-        """
-        Creates a copy of the coating.
-
-        Returns:
-            BaseCoating: The copy of the coating.
-        """
-        return BaseCoating()
-
     def to_dict(self):
         """
         Converts the coating to a dictionary.
@@ -185,18 +176,6 @@ class SimpleCoating(BaseCoating):
         """
         rays.i *= self.transmittance
         return rays
-
-    def copy(self):
-        """
-        Creates a copy of the coating.
-
-        Returns:
-            SimpleCoating: The copy of the coating.
-        """
-        return SimpleCoating(
-            be.copy(self.transmittance),
-            be.copy(self.reflectance)
-        )
 
     def to_dict(self):
         """
@@ -296,18 +275,6 @@ class FresnelCoating(BaseCoatingPolarized):
         self.material_post = material_post
 
         self.jones = JonesFresnel(material_pre, material_post)
-
-    def copy(self):
-        """
-        Creates a copy of the coating.
-
-        Returns:
-            FresnelCoating: The copy of the coating.
-        """
-        return FresnelCoating(
-            self.material_pre.copy(),
-            self.material_post.copy()
-        )
 
     def to_dict(self):
         """

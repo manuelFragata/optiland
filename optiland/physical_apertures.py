@@ -7,7 +7,6 @@ by a radial aperture that clips rays based on their distance from the origin.
 Kramer Harrison, 2024
 """
 from abc import ABC, abstractmethod
-import optiland.backend as be
 
 
 class BaseAperture(ABC):
@@ -45,15 +44,6 @@ class BaseAperture(ABC):
             scale_factor (float): The factor by which to scale the aperture.
         """
         pass  # pragma: no cover
-
-    def copy(self):
-        """
-        Create a copy of the aperture.
-
-        Returns:
-            BaseAperture: The copied aperture.
-        """
-        return BaseAperture()  # pragma: no cover
 
     def to_dict(self):
         """
@@ -116,15 +106,6 @@ class RadialAperture(BaseAperture):
         """
         self.r_max *= scale_factor
         self.r_min *= scale_factor
-
-    def copy(self):
-        """
-        Create a copy of the aperture.
-
-        Returns:
-            RadialAperture: The copied aperture.
-        """
-        return RadialAperture(be.copy(self.r_max), be.copy(self.r_min))
 
     def to_dict(self):
         """

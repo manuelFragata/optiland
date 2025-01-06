@@ -144,23 +144,6 @@ class CoordinateSystem:
         # Convert the effective rotation matrix back to Euler angles
         return be.from_matrix(eff_rot_mat).as_euler('xyz')
 
-    def copy(self):
-        """
-        Create a copy of the coordinate system.
-
-        Returns:
-            CoordinateSystem: The copy of the coordinate system.
-
-        """
-        reference_cs = self.reference_cs.copy() if self.reference_cs else None
-        return CoordinateSystem(be.copy(self.x),
-                                be.copy(self.y),
-                                be.copy(self.z),
-                                be.copy(self.rx),
-                                be.copy(self.ry),
-                                be.copy(self.rz),
-                                reference_cs)
-
     def to_dict(self):
         """
         Convert the coordinate system to a dictionary.
