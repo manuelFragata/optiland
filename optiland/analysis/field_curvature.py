@@ -91,7 +91,7 @@ class FieldCurvature:
 
         return data
 
-    def _intersection_parabasal_tangential(self, wavelength, delta=1e-1):
+    def _intersection_parabasal_tangential(self, wavelength, delta=1e-5):
         """
         Calculate the intersection of parabasal rays in tangential plane.
 
@@ -127,7 +127,7 @@ class FieldCurvature:
 
         return t1 * N1
 
-    def _intersection_parabasal_sagittal(self, wavelength, delta=1e-1):
+    def _intersection_parabasal_sagittal(self, wavelength, delta=1e-5):
         """
         Calculate the intersection of parabasal rays in sagittal plane.
 
