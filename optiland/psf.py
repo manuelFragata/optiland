@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LogNorm
 import matplotlib.ticker as mticker
 from optiland.wavefront import Wavefront
-from optiland.backend import be
+import optiland.backend as be
 
 
 class FFTPSF(Wavefront):
