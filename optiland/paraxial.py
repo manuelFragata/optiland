@@ -258,7 +258,9 @@ class Paraxial:
             tuple: marginal ray heights and angles as type np.ndarray
         """
         EPD = self.EPD()
-        obj_z = self.surfaces.positions[1] - 10  # 10 mm before first surface
+
+        # 10 mm before first surface
+        obj_z = self.surfaces.positions[1, 0] - 10
         if self.optic.object_surface.is_infinite:
             ya = EPD / 2
             ua = 0
@@ -269,7 +271,7 @@ class Paraxial:
             ua = EPD / (2 * z)
 
         wavelength = self.optic.primary_wavelength
-        return self.tracer.trace_generic(ya, ua, obj_z[0], wavelength)
+        return self.tracer.trace_generic(ya, ua, obj_z, wavelength)
 
     def chief_ray(self):
         """Find the chief ray heights and angles
