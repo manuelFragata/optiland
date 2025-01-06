@@ -22,7 +22,7 @@ class TestMarginalRayHeightSolve:
         height = 0.5
 
         ya, ua = optic.paraxial.marginal_ray()
-        offset = (height - ya[surface_idx]) / ua[surface_idx]
+        offset = (height - ya[surface_idx, 0]) / ua[surface_idx, 0]
         surf = optic.surface_group.surfaces[surface_idx]
         z_orig = np.copy(surf.geometry.cs.z)
 
@@ -130,7 +130,7 @@ class TestSolveManager:
         height = 0.5
 
         ya, ua = optic.paraxial.marginal_ray()
-        offset = (height - ya[surface_idx]) / ua[surface_idx]
+        offset = (height - ya[surface_idx, 0]) / ua[surface_idx, 0]
         surf = optic.surface_group.surfaces[surface_idx]
         z_orig = np.copy(surf.geometry.cs.z)
 
