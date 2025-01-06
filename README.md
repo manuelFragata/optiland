@@ -63,18 +63,17 @@ You can install the package using pip. To do so, follow these steps:
 
 
 ## Functionalities
-- Lens entry
-- 2D/3D visualization
-- Paraxial and aberration analyses
-- Real and paraxial ray tracing, including aspherics and freeforms
-- Polarization ray tracing
-- Real analysis functions (spot diagrams, ray aberration fans, OPD fans, distortion, PSF, MTF, etc.)
-- Glass and material catalogue (based on refractiveindex.info)
-- Design optimization (local and global)
-- Wavefront and Zernike analysis
-- Tolerancing, including sensitivity analysis and Monte Carlo methods
-- Coating and surface scatter (BSDF) analysis
-- Zemax file import
+- **Lens modeling**: Define optical systems, including aspheric, freeform and user-defined surfaces.
+- **2D/3D visualization**: Visualize ray paths and system geometry.
+- **Ray tracing**: Efficient and scalable real and paraxial ray tracing on **CPU or GPU**, with support for polarization. Includes a **differentiable ray tracer** via PyTorch for GPU-accelerated optimization and machine or deep learning applications.
+- **Aberration analysis**: Spot diagrams, ray aberration fans, OPD fans, distortion, field curvature, PSF, MTF, and related metrics.
+- **Material database**: Integrated glass and material catalog from refractiveindex.info.
+- **Optimization**: Local and global optimization methods for optical system design. Support for user-defined optimization metrics and algorithms.
+- **Tolerancing**: Sensitivity analysis and Monte Carlo methods for manufacturability studies.
+- **Surface scatter**: Model surface scatter using bidirectional scattering distribution functions (BSDF).
+- **Wavefront analysis**: Support for Zernike polynomials and wavefront computations.
+- **Interoperability**: Import and refine designs from Zemax files for integration with existing workflows.
+- **Machine learning integration**: Configurable backend for NumPy or PyTorch, enabling GPU acceleration, gradient propagation, and deep learning workflows.
 
 The code itself is in constant flux and new functionalities are always being added.
 
