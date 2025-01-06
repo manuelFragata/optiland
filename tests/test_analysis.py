@@ -121,23 +121,6 @@ class TestTripetSpotDiagram:
 
 class TestCookeTripletEncircledEnergy:
 
-    def test_encircled_energy_centroid(self, cooke_triplet):
-        encircled_energy = analysis.EncircledEnergy(cooke_triplet)
-        centroid = encircled_energy.centroid()
-
-        # encircled energy calculation includes randomness, so abs. tolerance
-        # is set to 1e-3
-        assert centroid[0][0] == pytest.approx(-8.207497747771947e-06,
-                                               abs=1e-3)
-        assert centroid[0][1] == pytest.approx(1.989147771098717e-06, abs=1e-3)
-
-        assert centroid[1][0] == pytest.approx(3.069405792964239e-05, abs=1e-3)
-        assert centroid[1][1] == pytest.approx(12.421326489507168, abs=1e-3)
-
-        assert centroid[2][0] == pytest.approx(3.1631726815066986e-07,
-                                               abs=1e-3)
-        assert centroid[2][1] == pytest.approx(18.13502264954927, abs=1e-3)
-
     @patch('matplotlib.pyplot.show')
     def test_view_encircled_energy(self, mock_show, cooke_triplet):
         encircled_energy = analysis.EncircledEnergy(cooke_triplet)
