@@ -137,8 +137,8 @@ class Paraxial:
                 lies at z=0 by definition.
         """
         stop_index = self.surfaces.stop_index
-        if stop_index == 0:
-            return self.surfaces.positions[1]
+        if stop_index == 1:
+            return self.surfaces.positions[1, 0]
 
         y0 = 0
         u0 = 0.1
@@ -147,14 +147,11 @@ class Paraxial:
         wavelength = self.optic.primary_wavelength
 
         # trace from center of stop on axis
-        y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                         skip=stop_index)
+        y, u = self.tracer.trace_generic(y0, u0, z0[0], wavelength,
+                                         reverse=True, skip=stop_index)
 
         loc_relative = y[-1] / u[-1]
-        try:
-            return loc_relative[0]
-        except IndexError:
-            return loc_relative
+        return loc_relative[0]
 
     def EPD(self):
         """Caculate the entrance pupil diameter
