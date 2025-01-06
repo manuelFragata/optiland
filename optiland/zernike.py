@@ -12,9 +12,9 @@ types to data points.
 Kramer Harrison, 2023
 """
 import math
-import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
+import optiland.backend as be
 
 
 class ZernikeStandard:
@@ -127,9 +127,9 @@ class ZernikeStandard:
             float: The calculated value of the azimuthal term.
         """
         if m >= 0:
-            return np.cos(m * phi)
+            return be.cos(m * phi)
         else:
-            return np.sin(m * phi)
+            return be.sin(m * phi)
 
     def _norm_constant(self, n=0, m=0):
         """Calculate the normalization constant of the Zernike polynomial.
@@ -141,7 +141,7 @@ class ZernikeStandard:
         Returns:
             float: The calculated value of the normalization constant.
         """
-        return np.sqrt((2 * n + 2) / (1 + (m == 0)))
+        return be.sqrt((2 * n + 2) / (1 + (m == 0)))
 
     def _generate_indices(self):
         """Generate the indices for the Zernike terms.
@@ -202,8 +202,8 @@ class ZernikeFringe(ZernikeStandard):
         for n in range(20):
             for m in range(-n, n+1):
                 if (n - m) % 2 == 0:
-                    number.append(int((1 + (n + np.abs(m))/2)**2 -
-                                      2 * np.abs(m) + (1 - np.sign(m)) / 2))
+                    number.append(int((1 + (n + be.abs(m))/2)**2 -
+                                      2 * be.abs(m) + (1 - be.sign(m)) / 2))
                     indices.append((n, m))
 
         # sort indices according to fringe coefficient number
@@ -246,8 +246,8 @@ class ZernikeNoll(ZernikeStandard):
             float: The normalization constant for the Zernike polynomial.
         """
         if m == 0:
-            return np.sqrt(n + 1)
-        return np.sqrt(2 * n + 2)
+            return be.sqrt(n + 1)
+        return be.sqrt(2 * n + 2)
 
     def _generate_indices(self):
         """Generate the indices for the Zernike terms.
@@ -270,7 +270,7 @@ class ZernikeNoll(ZernikeStandard):
                         c = 1
                     elif m <= 0 and mod <= 1:
                         c = 1
-                    number.append(n * (n + 1) / 2 + np.abs(m) + c)
+                    number.append(n * (n + 1) / 2 + be.abs(m) + c)
                     indices.append((n, m))
 
         # sort indices according to fringe coefficient number
@@ -322,9 +322,9 @@ class ZernikeFit:
         self.type = zernike_type
         self.num_terms = num_terms
 
-        self.radius = np.sqrt(self.x**2 + self.y**2)
-        self.phi = np.arctan2(self.y, self.x)
-        self.num_pts = np.size(self.z)
+        self.radius = be.sqrt(self.x**2 + self.y**2)
+        self.phi = be.arctan2(self.y, self.x)
+        self.num_pts = be.size(self.z)
 
         if self.type == 'fringe':
             self.zernike = ZernikeFringe()
@@ -361,13 +361,13 @@ class ZernikeFit:
         Raises:
             ValueError: If the projection is not '2d' or '3d'.
         """
-        x, y = np.meshgrid(np.linspace(-1, 1, num_points),
-                           np.linspace(-1, 1, num_points))
-        radius = np.sqrt(x**2 + y**2)
-        phi = np.arctan2(y, x)
+        x, y = be.meshgrid(be.linspace(-1, 1, num_points),
+                           be.linspace(-1, 1, num_points))
+        radius = be.sqrt(x**2 + y**2)
+        phi = be.arctan2(y, x)
         z = self.zernike.poly(radius, phi)
 
-        z[radius > 1] = np.nan
+        z[radius > 1] = be.nan
 
         if projection == '2d':
             self._plot_2d(z, figsize=figsize, z_label=z_label)
@@ -388,7 +388,7 @@ class ZernikeFit:
                 (default is 'OPD (waves)').
         """
         _, ax = plt.subplots(figsize=figsize)
-        im = ax.imshow(np.flipud(z), extent=[-1, 1, -1, 1])
+        im = ax.imshow(be.flipud(z), extent=[-1, 1, -1, 1])
 
         ax.set_xlabel('Pupil X')
         ax.set_ylabel('Pupil Y')
@@ -441,7 +441,7 @@ class ZernikeFit:
                 residual. Default is 'Residual (waves)'.
         """
         z = self.zernike.poly(self.radius, self.phi)
-        rms = np.sqrt(np.mean((z-self.z)**2))
+        rms = be.sqrt(be.mean((z-self.z)**2))
 
         _, ax = plt.subplots(figsize=figsize)
         s = ax.scatter(self.x, self.y, c=z-self.z)
