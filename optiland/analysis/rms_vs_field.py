@@ -89,11 +89,11 @@ class RmsWavefrontErrorVsField(Wavefront):
     def __init__(self, optic, num_fields=32, wavelengths='all', num_rays=12,
                  distribution='hexapolar'):
         self.num_fields = num_fields
-        fields = [(0, Hy) for Hy in np.linspace(0, 1, num_fields)]
+        fields = [(0, Hy) for Hy in be.linspace(0, 1, num_fields)]
         super().__init__(optic, fields, wavelengths, num_rays, distribution)
 
-        self._field = np.array(fields)
-        self._wavefront_error = np.array(self._rms_wavefront_error())
+        self._field = be.array(fields)
+        self._wavefront_error = be.array(self._rms_wavefront_error())
 
     def view(self, figsize=(7, 4.5)):
         """View the RMS wavefront error versus field coordinate.
@@ -124,8 +124,8 @@ class RmsWavefrontErrorVsField(Wavefront):
 
     def _rms_wavefront_error(self):
         """Calculate the RMS wavefront error."""
-        wavefront_error = np.zeros((self.num_fields, len(self.wavelengths)))
+        wavefront_error = be.zeros((self.num_fields, len(self.wavelengths)))
         for i in range(self.num_fields):
             for j in range(len(self.wavelengths)):
-                wavefront_error[i, j] = np.sqrt(np.mean(self.data[i][j][0]**2))
+                wavefront_error[i, j] = be.sqrt(be.mean(self.data[i][j][0]**2))
         return wavefront_error
