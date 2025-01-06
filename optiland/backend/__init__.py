@@ -15,10 +15,10 @@ from optiland.backend.torch_backend import grad_mode  # noqa: F401
 
 
 _backends = {
-    "numpy": numpy_backend,
-    "torch": torch_backend,
+    'numpy': numpy_backend,
+    'torch': torch_backend,
 }
-_current_backend = _backends['numpy']  # Default backend is numpy
+_current_backend = 'numpy'  # Default backend is numpy
 
 
 def set_backend(name: str):
@@ -27,7 +27,7 @@ def set_backend(name: str):
     if name not in _backends:
         raise ValueError(f'Unknown backend "{name}". '
                          f'Available: {list(_backends.keys())}')
-    _current_backend = _backends[name]
+    _current_backend = name
 
 
 def get_backend():
@@ -43,12 +43,13 @@ def __getattr__(name):
     `np.sin` or `torch.sin` based on the current backend. Likewise, `be.pi`
     will return `np.pi` or `torch.pi`.
     """
-    if hasattr(_current_backend, name):
-        return getattr(_current_backend, name)
+    backend = _backends[_current_backend]
+    if hasattr(backend, name):
+        return getattr(backend, name)
 
-    elif hasattr(_current_backend._lib, name):
-        return getattr(_current_backend._lib, name)
+    elif hasattr(backend._lib, name):
+        return getattr(backend._lib, name)
 
     raise AttributeError(
-        f'"{_current_backend.__name__}" backend has no attribute "{name}"'
+        f'"{backend.__name__}" backend has no attribute "{name}"'
     )
