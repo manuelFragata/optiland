@@ -62,9 +62,9 @@ class BaseCoating(ABC):
         Returns:
             np.ndarray: The angle of incidence for each ray.
         """
-        dot = np.abs(nx * rays.L0 + ny * rays.M0 + nz * rays.N0)
-        dot = np.clip(dot, -1, 1)  # required due to numerical precision
-        return np.arccos(dot)
+        dot = be.abs(nx * rays.L0 + ny * rays.M0 + nz * rays.N0)
+        dot = be.clip(dot, -1, 1)  # required due to numerical precision
+        return be.arccos(dot)
 
     @abstractmethod
     def reflect(self, rays: RealRays, nx: np.ndarray = None,
