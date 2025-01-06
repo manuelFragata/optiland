@@ -8,9 +8,9 @@ using different optimization algorithms.
 Kramer Harrison, 2024
 """
 import warnings
-import numpy as np
 import pandas as pd
 from scipy import optimize
+import optiland.backend as be
 from optiland.optimization.variable import VariableManager
 from optiland.optimization.operand import OperandManager
 
@@ -64,15 +64,15 @@ class OptimizationProblem:
 
     def fun_array(self):
         """Array of operand weighted deltas squared"""
-        return np.array([op.fun() for op in self.operands])**2
+        return be.array([op.fun() for op in self.operands])**2
 
     def sum_squared(self):
         """Calculate the sum of squared operand weighted deltas"""
-        return np.sum(self.fun_array())
+        return be.sum(self.fun_array())
 
     def rss(self):
         """RSS of current merit function"""
-        return np.sqrt(self.sum_squared())
+        return be.sqrt(self.sum_squared())
 
     def update_optics(self):
         """Update all optics considered in the optimization problem"""
@@ -93,7 +93,7 @@ class OptimizationProblem:
 
         df = pd.DataFrame(data)
         funs = self.fun_array()
-        df['Contribution (%)'] = funs / np.sum(funs) * 100
+        df['Contribution (%)'] = funs / be.sum(funs) * 100
 
         print(df.to_markdown(headers='keys', tablefmt='psql'))
 
@@ -214,9 +214,9 @@ class OptimizerGeneric:
         for idvar, var in enumerate(self.problem.variables):
             var.update(x[idvar])
         self.problem.update_optics()  # update all optics (e.g., pickups)
-        funs = np.array([op.fun() for op in self.problem.operands])
-        rss = np.sum(funs**2)
-        if np.isnan(rss):
+        funs = be.array([op.fun() for op in self.problem.operands])
+        rss = be.sum(funs**2)
+        if be.isnan(rss):
             return 1e10
         else:
             return rss
@@ -263,9 +263,9 @@ class LeastSquares(OptimizerGeneric):
         self._x.append(x0)
 
         lower = [var.bounds[0] if var.bounds[0] is not None
-                 else -np.inf for var in self.problem.variables]
+                 else -be.inf for var in self.problem.variables]
         upper = [var.bounds[1] if var.bounds[1] is not None
-                 else np.inf for var in self.problem.variables]
+                 else be.inf for var in self.problem.variables]
         bounds = (lower, upper)
 
         if disp:
