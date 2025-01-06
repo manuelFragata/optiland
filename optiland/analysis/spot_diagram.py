@@ -59,6 +59,8 @@ class SpotDiagram:
         if self.wavelengths == 'all':
             self.wavelengths = self.optic.wavelengths.get_wavelengths()
 
+        self.wavelengths = be.array(self.wavelengths)
+
         result = self._generate_data(
             self.fields,
             self.wavelengths,
