@@ -46,7 +46,7 @@ class TestSurfaceFactory:
         assert isinstance(surface, Surface)
         assert surface.geometry.radius == 10
         assert surface.geometry.k == 0
-        assert surface.geometry.c == [1, 2, 3]
+        assert np.array_equal(surface.geometry.c, np.array([1, 2, 3]))
         assert isinstance(surface.material_pre, IdealMaterial)
         assert isinstance(surface.material_post, IdealMaterial)
 
