@@ -109,12 +109,13 @@ class PupilAberration:
                 'Py': be.linspace(-1, 1, self.num_points)}
 
         # determine size of stop
-        self.optic.paraxial.trace(0, 1, self.optic.primary_wavelength)
-        d = self.optic.surface_group.y[stop_idx, 0]
+        y, _ = self.optic.paraxial.trace(0, 1, self.optic.primary_wavelength)
+        d = y[stop_idx, 0]
 
         # Paraxial trace
-        self.optic.paraxial.trace(0, data['Py'], self.optic.primary_wavelength)
-        parax_ref = self.optic.surface_group.y[stop_idx, :]
+        y, _ = self.optic.paraxial.trace(0, data['Py'],
+                                         self.optic.primary_wavelength)
+        parax_ref = y[stop_idx, :]
 
         for field in self.fields:
             Hx = field[0]
