@@ -283,10 +283,12 @@ class Paraxial:
         pos = self.optic.surface_group.positions
         z0 = pos[-1] - pos[stop_index]
         wavelength = self.optic.primary_wavelength
+        num_surf = self.surfaces.num_surfaces
+        skip = num_surf - stop_index
 
         # trace from center of stop on axis
         y, u = self.tracer.trace_generic(y0, u0, z0, wavelength, reverse=True,
-                                         skip=stop_index)
+                                         skip=skip)
 
         max_field = self.optic.fields.max_y_field
 
@@ -296,7 +298,7 @@ class Paraxial:
             u1 = 0.1 * be.tan(be.deg2rad(max_field)) / u[-1]
 
         yn, un = self.tracer.trace_generic(y0, u1, z0, wavelength,
-                                           reverse=True, skip=stop_index)
+                                           reverse=True, skip=skip)
 
         # trace in forward direction
         z0 = self.optic.surface_group.positions[1]
