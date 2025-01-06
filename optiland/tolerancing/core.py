@@ -11,6 +11,8 @@ Kramer Harrison, 2024
 from optiland.tolerancing.perturbation import BaseSampler, Perturbation
 from optiland.tolerancing.compensator import CompensatorOptimizer
 from optiland.optimization.operand import Operand
+import optiland.backend as be
+import numpy as np
 
 
 class Tolerancing:
@@ -50,6 +52,9 @@ class Tolerancing:
     """
 
     def __init__(self, optic, method='generic', tol=1e-5):
+        if not be.get_backend() == np:
+            raise ValueError('The tolerancing module currently only supports '
+                             'the NumPy backend.')
         self.optic = optic
         self.method = method
         self.tol = tol
