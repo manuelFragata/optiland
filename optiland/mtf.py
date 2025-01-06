@@ -5,8 +5,8 @@ transfer function (MTF) of an optical system.
 
 Kramer Harrison, 2024
 """
-import numpy as np
 import matplotlib.pyplot as plt
+import optiland.backend as be
 from optiland.analysis import SpotDiagram
 from optiland.psf import FFTPSF
 
@@ -65,7 +65,7 @@ class GeometricMTF(SpotDiagram):
 
         super().__init__(optic, fields, [wavelength], num_rays, distribution)
 
-        self.freq = np.linspace(0, self.max_freq, num_points)
+        self.freq = be.linspace(0, self.max_freq, num_points)
         self.mtf, self.diff_limited_mtf = self._generate_mtf_data()
 
     def view(self, figsize=(12, 4), add_reference=False):
@@ -102,8 +102,8 @@ class GeometricMTF(SpotDiagram):
                 the scale factor.
         """
         if self.scale:
-            phi = np.arccos(self.freq / self.max_freq)
-            scale_factor = 2 / np.pi * (phi - np.cos(phi) * np.sin(phi))
+            phi = be.arccos(self.freq / self.max_freq)
+            scale_factor = 2 / be.pi * (phi - be.cos(phi) * be.sin(phi))
         else:
             scale_factor = 1
 
@@ -125,16 +125,16 @@ class GeometricMTF(SpotDiagram):
         Returns:
             ndarray: The MTF data for the field point.
         """
-        A, edges = np.histogram(xi, bins=self.num_points+1)
+        A, edges = be.histogram(xi, bins=self.num_points+1)
         x = (edges[1:] + edges[:-1]) / 2
         dx = x[1] - x[0]
 
-        mtf = np.zeros_like(v)
+        mtf = be.zeros_like(v)
         for k in range(len(v)):
-            Ac = np.sum(A * np.cos(2 * np.pi * v[k] * x) * dx) / np.sum(A * dx)
-            As = np.sum(A * np.sin(2 * np.pi * v[k] * x) * dx) / np.sum(A * dx)
+            Ac = be.sum(A * be.cos(2 * be.pi * v[k] * x) * dx) / be.sum(A * dx)
+            As = be.sum(A * be.sin(2 * be.pi * v[k] * x) * dx) / be.sum(A * dx)
 
-            mtf[k] = np.sqrt(Ac**2 + As**2)
+            mtf[k] = be.sqrt(Ac**2 + As**2)
 
         return mtf * scale_factor
 
@@ -227,7 +227,7 @@ class FFTMTF:
                 limit reference line. Defaults to False.
         """
         dx = self._get_mtf_units()
-        freq = np.arange(self.grid_size//2) * dx
+        freq = be.arange(self.grid_size//2) * dx
 
         _, ax = plt.subplots(figsize=figsize)
 
@@ -236,9 +236,9 @@ class FFTMTF:
 
         if add_reference:
             ratio = freq / self.max_freq
-            ratio = np.clip(ratio, -1, 1)  # avoid invalid value in arccos
-            phi = np.arccos(ratio)
-            diff_limited_mtf = 2 / np.pi * (phi - np.cos(phi) * np.sin(phi))
+            ratio = be.clip(ratio, -1, 1)  # avoid invalid value in arccos
+            phi = be.arccos(ratio)
+            diff_limited_mtf = 2 / be.pi * (phi - be.cos(phi) * be.sin(phi))
             ax.plot(freq, diff_limited_mtf, 'k--', label='Diffraction Limit')
 
         ax.legend(bbox_to_anchor=(1.05, 0.5), loc='center left')
@@ -277,14 +277,14 @@ class FFTMTF:
             list: A list of MTF data for each field. Each MTF data is a list
                 containing the tangential and sagittal MTF values.
         """
-        mtf_data = [np.abs(np.fft.fftshift(np.fft.fft2(psf)))
+        mtf_data = [be.abs(be.fft.fftshift(be.fft.fft2(psf)))
                     for psf in self.psf]
         mtf = []
         for data in mtf_data:
             tangential = data[self.grid_size//2:, self.grid_size//2]
             sagittal = data[self.grid_size//2, self.grid_size//2:]
-            mtf.append([tangential/np.max(tangential),
-                        sagittal/np.max(sagittal)])
+            mtf.append([tangential/be.max(tangential),
+                        sagittal/be.max(sagittal)])
         return mtf
 
     def _get_fno(self):
@@ -301,7 +301,7 @@ class FFTMTF:
             D = self.optic.paraxial.XPD()
             p = D / self.optic.paraxial.EPD()
             m = self.optic.paraxial.magnification()
-            FNO *= (1 + np.abs(m) / p)
+            FNO *= (1 + be.abs(m) / p)
 
         return FNO
 
