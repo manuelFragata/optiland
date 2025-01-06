@@ -9,7 +9,7 @@ the surface parameters.
 Kramer Harrison, 2024
 """
 
-import numpy as np
+import optiland.backend as be
 from optiland.coordinate_system import CoordinateSystem
 from optiland.materials import BaseMaterial, IdealMaterial, Material
 from optiland.coatings import BaseCoating, FresnelCoating
@@ -156,10 +156,10 @@ class SurfaceFactory:
         Returns:
             geometry: The configured geometry object.
         """
-        radius = kwargs.get('radius', np.inf)
+        radius = kwargs.get('radius', be.inf)
         conic = kwargs.get('conic', 0)
 
-        if np.isinf(radius):
+        if be.isinf(radius):
             geometry = Plane(cs)
         else:
             geometry = StandardGeometry(cs, radius, conic)
@@ -179,7 +179,7 @@ class SurfaceFactory:
         Returns:
             geometry: The configured geometry object.
         """
-        radius = kwargs.get('radius', np.inf)
+        radius = kwargs.get('radius', be.inf)
         conic = kwargs.get('conic', 0)
         tol = kwargs.get('tol', 1e-6)
         max_iter = kwargs.get('max_iter', 100)
@@ -202,7 +202,7 @@ class SurfaceFactory:
         Returns:
             geometry: The configured geometry object.
         """
-        radius = kwargs.get('radius', np.inf)
+        radius = kwargs.get('radius', be.inf)
         conic = kwargs.get('conic', 0)
         tol = kwargs.get('tol', 1e-6)
         max_iter = kwargs.get('max_iter', 100)
@@ -226,7 +226,7 @@ class SurfaceFactory:
         Returns:
             geometry: The configured geometry object.
         """
-        radius = kwargs.get('radius', np.inf)
+        radius = kwargs.get('radius', be.inf)
         conic = kwargs.get('conic', 0)
         tol = kwargs.get('tol', 1e-6)
         max_iter = kwargs.get('max_iter', 100)
