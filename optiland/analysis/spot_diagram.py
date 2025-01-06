@@ -27,7 +27,7 @@ class SpotDiagram:
     """
 
     def __init__(self, optic, fields='all', wavelengths='all', num_rings=6,
-                 distribution='hexapolar'):
+                 distribution='hexapolar', norm_index=None):
         """Create an instance of SpotDiagram
 
         Note:
@@ -46,6 +46,8 @@ class SpotDiagram:
                 tracing. Default is 6.
             distribution (str): pupil distribution type for ray tracing.
                 Default is 'hexapolar'.
+            norm_index (int): index of the wavelength to normalize the
+                centroid. Default is None.
 
         Returns:
             None
@@ -58,6 +60,12 @@ class SpotDiagram:
 
         if self.wavelengths == 'all':
             self.wavelengths = self.optic.wavelengths.get_wavelengths()
+            self.norm_index = optic.wavelengths.primary_index
+        else:
+            if norm_index is None:
+                raise ValueError('norm_index must be provided if wavelengths '
+                                 'is not "all"')
+            self.norm_index = norm_index
 
         self.wavelengths = be.array(self.wavelengths)
 
@@ -145,11 +153,11 @@ class SpotDiagram:
         return rms
 
     def _compute_centroids(self, data):
-        norm_index = self.optic.wavelengths.primary_index
+        """Compute the centroid of the spot data."""
         centroids = []
         for field_data in data:
-            centroid_x = be.mean(field_data[norm_index][0])
-            centroid_y = be.mean(field_data[norm_index][1])
+            centroid_x = be.mean(field_data[self.norm_index][0])
+            centroid_y = be.mean(field_data[self.norm_index][1])
             centroids.append((centroid_x, centroid_y))
         return centroids
 
