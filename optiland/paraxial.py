@@ -147,8 +147,9 @@ class Paraxial:
         wavelength = self.optic.primary_wavelength
 
         # trace from center of stop on axis
+        skip = self.surfaces.num_surfaces - stop_index
         y, u = self.tracer.trace_generic(y0, u0, z0[0], wavelength,
-                                         reverse=True, skip=stop_index)
+                                         reverse=True, skip=skip)
 
         loc_relative = y[-1] / u[-1]
         return loc_relative[0]
