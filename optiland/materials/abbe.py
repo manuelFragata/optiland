@@ -73,15 +73,6 @@ class AbbeMaterial(BaseMaterial):
         coefficients = be.load(coefficients_file)
         return X_poly @ coefficients
 
-    def copy(self):
-        """
-        Creates a copy of the material.
-
-        Returns:
-            AbbeMaterial: The copy of the material.
-        """
-        return AbbeMaterial(be.copy(self.index), be.copy(self.abbe))
-
     def to_dict(self):
         """
         Returns a dictionary representation of the material.

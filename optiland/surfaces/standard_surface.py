@@ -257,24 +257,6 @@ class Surface:
 
         return True
 
-    def copy(self):
-        """
-        Creates a copy of the surface.
-
-        Returns:
-            Surface: The surface.
-        """
-        return self.__class__(
-            self.geometry.copy(),
-            self.material_pre.copy(),
-            self.material_post.copy(),
-            self.is_stop,
-            self.aperture.copy() if self.aperture else None,
-            self.coating.copy() if self.coating else None,
-            self.bsdf.copy() if self.bsdf else None,
-            self.is_reflective
-        )
-
     def to_dict(self):
         """
         Returns a dictionary representation of the surface.

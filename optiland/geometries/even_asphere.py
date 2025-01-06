@@ -101,22 +101,6 @@ class EvenAsphere(NewtonRaphsonGeometry):
 
         return nx, ny, nz
 
-    def copy(self):
-        """
-        Creates a copy of the asphere.
-
-        Returns:
-            EvenAsphere: The copy of the asphere.
-        """
-        return EvenAsphere(
-            self.cs.copy(),
-            be.copy(self.radius),
-            be.copy(self.k),
-            be.copy(self.tol),
-            be.copy(self.max_iter),
-            be.copy(self.c)
-        )
-
     def to_dict(self):
         """
         Converts the geometry to a dictionary.

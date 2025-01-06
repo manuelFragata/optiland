@@ -18,7 +18,6 @@ Kramer Harrison, 2024
 """
 
 import numpy as np
-import optiland.backend as be
 from optiland.geometries.newton_raphson import NewtonRaphsonGeometry
 from optiland.coordinate_system import CoordinateSystem
 
@@ -175,25 +174,6 @@ class ChebyshevPolynomialGeometry(NewtonRaphsonGeometry):
             raise ValueError('Chebyshev input coordinates must be normalized '
                              'to [-1, 1]. Consider updating the normalization '
                              'factors.')
-
-    def copy(self):
-        """
-        Creates a copy of the Chebyshev polynomial geometry.
-
-        Returns:
-            ChebyshevPolynomialGeometry: The copy of the Chebyshev polynomial
-                geometry.
-        """
-        return ChebyshevPolynomialGeometry(
-            self.cs.copy(),
-            be.copy(self.radius),
-            be.copy(self.k),
-            be.copy(self.tol),
-            be.copy(self.max_iter),
-            be.copy(self.c),
-            be.copy(self.norm_x),
-            be.copy(self.norm_y)
-        )
 
     def to_dict(self):
         """

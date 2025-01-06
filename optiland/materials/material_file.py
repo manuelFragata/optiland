@@ -334,15 +334,6 @@ class MaterialFile(BaseMaterial):
         except KeyError:
             pass
 
-    def copy(self):
-        """
-        Creates a copy of the material.
-
-        Returns:
-            MaterialFile: The copy of the material.
-        """
-        return MaterialFile(self.filename)
-
     def to_dict(self):
         """
         Returns the material data as a dictionary.

@@ -128,18 +128,6 @@ class StandardGeometry(BaseGeometry):
 
         return nx, ny, nz
 
-    def copy(self):
-        """Create a copy of the geometry.
-
-        Returns:
-            StandardGeometry: The copy of the geometry.
-        """
-        return StandardGeometry(
-            self.cs.copy(),
-            be.copy(self.radius),
-            be.copy(self.k)
-        )
-
     def to_dict(self):
         """Convert the geometry to a dictionary.
 

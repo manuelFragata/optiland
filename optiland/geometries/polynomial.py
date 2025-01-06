@@ -17,7 +17,6 @@ coefficient for x^i * y^j.
 Kramer Harrison, 2024
 """
 import numpy as np
-import optiland.backend as be
 from optiland.geometries.newton_raphson import NewtonRaphsonGeometry
 from optiland.coordinate_system import CoordinateSystem
 
@@ -112,22 +111,6 @@ class PolynomialGeometry(NewtonRaphsonGeometry):
         nz = -1 / norm
 
         return nx, ny, nz
-
-    def copy(self):
-        """
-        Creates a copy of the polynomial geometry.
-
-        Returns:
-            PolynomialGeometry: The copy of the polynomial geometry.
-        """
-        return PolynomialGeometry(
-            self.cs.copy(),
-            be.copy(self.radius),
-            be.copy(self.k),
-            be.copy(self.tol),
-            be.copy(self.max_iter),
-            be.copy(self.c)
-        )
 
     def to_dict(self):
         """

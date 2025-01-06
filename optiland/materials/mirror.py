@@ -24,15 +24,6 @@ class Mirror(IdealMaterial):
     def __init__(self):
         super().__init__(n=-1.0, k=0.0)
 
-    def copy(self):
-        """
-        Create a copy of the mirror material.
-
-        Returns:
-            Mirror: The mirror material.
-        """
-        return Mirror()
-
     @classmethod
     def from_dict(cls, data):
         """

@@ -81,14 +81,6 @@ class BaseGeometry(ABC):
         """
         self.cs.globalize(rays)
 
-    def copy(self):
-        """Create a copy of the geometry.
-
-        Returns:
-            BaseGeometry: The copy of the geometry.
-        """
-        return BaseGeometry(self.cs.copy())
-
     def to_dict(self):
         """Convert the geometry to a dictionary.
 
