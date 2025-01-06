@@ -62,8 +62,10 @@ class GeometricMTF(SpotDiagram):
         if max_freq == 'cutoff':
             # wavelength must be converted to mm for frequency units cycles/mm
             self.max_freq = 1 / (wavelength * 1e-3 * optic.paraxial.FNO())
+        norm_index = 0
 
-        super().__init__(optic, fields, [wavelength], num_rays, distribution)
+        super().__init__(optic, fields, [wavelength], num_rays, distribution,
+                         norm_index)
 
         self.freq = be.linspace(0, self.max_freq, num_points)
         self.mtf, self.diff_limited_mtf = self._generate_mtf_data()
