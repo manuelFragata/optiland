@@ -29,6 +29,11 @@ dependencies = [
 ]
 license = { text = "MIT License" }
 
+[project.optional-dependencies]
+torch = [
+    "torch",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/HarrisonKramer/optiland"
 
