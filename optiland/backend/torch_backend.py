@@ -235,3 +235,7 @@ def meshgrid(*arrays):
 
 def matrix_vector_multiply_and_squeeze(p, E):
     return torch.matmul(p, E.unsqueeze(2)).squeeze(2)
+
+
+def roll(x, shift, axis=None):
+    return torch.roll(x, shift, dims=axis)
