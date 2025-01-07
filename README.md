@@ -58,7 +58,7 @@ To install Optiland, choose one of the following options:
 
 1. **Basic Installation**  
 
-Install the core Optiland package:
+    Install the core Optiland package:
 
    ```bash
    pip install optiland
@@ -66,14 +66,15 @@ Install the core Optiland package:
 
 2. **Installation with Torch (CPU-only)**
 
-Install Optiland with the PyTorch backend (CPU only):
+    Install Optiland with the PyTorch backend (CPU only):
 
     ```bash
     pip install optiland[torch]
     ```
+
 3. **Installation with Torch (GPU support)**
 
-For GPU acceleration, install PyTorch manually first following instructions at the [PyTorch Installation Guide](https://pytorch.org/get-started/locally/). Then, install Optiland:
+    For GPU acceleration, install PyTorch manually first following instructions at the [PyTorch Installation Guide](https://pytorch.org/get-started/locally/). Then, install Optiland:
 
    ```bash
    pip install optiland
