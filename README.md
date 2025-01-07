@@ -54,14 +54,30 @@ See the [Developer's Guide](https://optiland.readthedocs.io/en/latest/developers
 
 ## Installation
 
-You can install the package using pip. To do so, follow these steps:
+To install Optiland, choose one of the following options:
 
-1. Open a terminal or command prompt.
-2. Run the following command to install the package:
+1. **Basic Installation**  
 
-    ```sh
-    pip install optiland
+Install the core Optiland package:
+
+   ```bash
+   pip install optiland
+   ```
+
+2. **Installation with Torch (CPU-only)**
+
+Install Optiland with the PyTorch backend (CPU only):
+
+    ```bash
+    pip install optiland[torch]
     ```
+3. **Installation with Torch (GPU support)**
+
+For GPU acceleration, install PyTorch manually first following instructions at the [PyTorch Installation Guide](https://pytorch.org/get-started/locally/). Then, install Optiland:
+
+   ```bash
+   pip install optiland
+   ```
 
 
 ## Functionalities
