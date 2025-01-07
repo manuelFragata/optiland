@@ -95,8 +95,6 @@ class DoubleGauss(optic.Optic):
         self.add_wavelength(value=0.5876, is_primary=True)
         self.add_wavelength(value=0.6563)
 
-        self.update_paraxial()
-
 
 class ReverseTelephoto(optic.Optic):
     def __init__(self):
@@ -137,8 +135,6 @@ class ReverseTelephoto(optic.Optic):
         self.add_wavelength(value=0.4861)
         self.add_wavelength(value=0.5876, is_primary=True)
         self.add_wavelength(value=0.6563)
-
-        self.update_paraxial()
 
 
 class ObjectiveUS008879901(optic.Optic):
@@ -197,8 +193,6 @@ class ObjectiveUS008879901(optic.Optic):
         self.add_wavelength(value=0.5875618, is_primary=True)
         self.add_wavelength(value=0.6562725)
 
-        self.update_paraxial()
-
 
 class TelescopeObjective48Inch(optic.Optic):
     """48-in. Telescope Objective
@@ -239,8 +233,6 @@ class TelescopeObjective48Inch(optic.Optic):
         self.add_wavelength(value=0.48613270)
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
-
-        self.update_paraxial()
 
 
 class HeliarLens(optic.Optic):
@@ -284,8 +276,6 @@ class HeliarLens(optic.Optic):
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
 
-        self.update_paraxial()
-
 
 class TessarLens(optic.Optic):
     """Tessar Lens f/4.5
@@ -325,8 +315,6 @@ class TessarLens(optic.Optic):
         self.add_wavelength(value=0.48613270)
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
-
-        self.update_paraxial()
 
 
 class LensWithFieldCorrector(optic.Optic):
@@ -372,8 +360,6 @@ class LensWithFieldCorrector(optic.Optic):
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
 
-        self.update_paraxial()
-
         # scale from inches to mm
         self.scale_system(25.4)
 
@@ -417,8 +403,6 @@ class PetzvalLens(optic.Optic):
         self.add_wavelength(value=0.48613270)
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
-
-        self.update_paraxial()
 
         # scale from inches to mm
         self.scale_system(25.4)
@@ -464,8 +448,6 @@ class Telephoto(optic.Optic):
         self.add_wavelength(value=0.48613270)
         self.add_wavelength(value=0.58756180, is_primary=True)
         self.add_wavelength(value=0.65627250)
-
-        self.update_paraxial()
 
         # scale from inches to mm
         self.scale_system(25.4)
