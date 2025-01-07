@@ -6,12 +6,16 @@ but it can be switched to PyTorch using the `set_backend` function.
 
 Kramer Harrison, 2024
 """
-from optiland.backend import (
-    numpy_backend,
-    torch_backend
-)
+from optiland.backend import numpy_backend
 from optiland.backend.utils import to_numpy  # noqa: F401
-from optiland.backend.torch_backend import grad_mode  # noqa: F401
+import importlib.util
+
+
+try:
+    from optiland.backend import torch_backend
+    from optiland.backend.torch_backend import set_device  # noqa: F401
+except ImportError:
+    torch_backend = None  # Torch is optional
 
 
 _backends = {
@@ -24,15 +28,28 @@ _current_backend = 'numpy'  # Default backend is numpy
 def set_backend(name: str):
     """Set the current backend."""
     global _current_backend
+
     if name not in _backends:
         raise ValueError(f'Unknown backend "{name}". '
-                         f'Available: {list(_backends.keys())}')
+                         f'Available: {list_available_backends()}')
+
+    if name == 'torch' and torch_backend is None:
+        raise ImportError('The "torch" backend requires PyTorch, '
+                          'which is not installed.')
+
     _current_backend = name
 
 
 def get_backend():
     """Get the current backend module."""
     return _current_backend
+
+
+def list_available_backends():
+    available = ['numpy']  # NumPy always available
+    if importlib.util.find_spec('torch'):  # Check if torch is installed
+        available.append('torch')
+    return available
 
 
 def __getattr__(name):
