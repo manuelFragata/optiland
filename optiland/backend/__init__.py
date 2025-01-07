@@ -13,7 +13,9 @@ import importlib.util
 
 try:
     from optiland.backend import torch_backend
-    from optiland.backend.torch_backend import set_device  # noqa: F401
+    from optiland.backend.torch_backend import (  # noqa: F401
+        set_device, get_device, grad_mode
+    )
 except ImportError:
     torch_backend = None  # Torch is optional
 
