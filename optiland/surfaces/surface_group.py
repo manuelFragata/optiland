@@ -96,8 +96,9 @@ class SurfaceGroup:
     @property
     def positions(self):
         """np.array: z positions of surface vertices"""
-        return be.array([surf.geometry.cs.position_in_gcs[2]
-                         for surf in self.surfaces])
+        positions = be.array([surf.geometry.cs.position_in_gcs[2]
+                              for surf in self.surfaces])
+        return positions.reshape(-1, 1)
 
     @property
     def radii(self):
