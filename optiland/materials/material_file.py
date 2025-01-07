@@ -114,10 +114,10 @@ class MaterialFile(BaseMaterial):
         try:
             n = 1 + c[0]
             for k in range(1, len(c), 2):
-                n += c[k] * w**2 / (w**2 - c[k+1]**2)
+                n = n + c[k] * w**2 / (w**2 - c[k+1]**2)
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 1.')
-        return be.sqrt(n)
+        return be.sqrt(be.array(n))
 
     def _formula_2(self, w):
         """
@@ -134,10 +134,10 @@ class MaterialFile(BaseMaterial):
         try:
             n = 1 + c[0]
             for k in range(1, len(c), 2):
-                n += c[k] * w**2 / (w**2 - c[k+1])
+                n = n + c[k] * w**2 / (w**2 - c[k+1])
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 2.')
-        return be.sqrt(n)
+        return be.sqrt(be.array(n))
 
     def _formula_3(self, w):
         """
@@ -154,8 +154,8 @@ class MaterialFile(BaseMaterial):
         try:
             n = c[0]
             for k in range(1, len(c), 2):
-                n += c[k]*w**c[k+1]
-            return be.sqrt(n)
+                n = n + c[k]*w**c[k+1]
+            return be.sqrt(be.array(n))
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 3.')
 
@@ -175,8 +175,8 @@ class MaterialFile(BaseMaterial):
             n = c[0] + c[1]*w**c[2] / (w**2 - c[3]**c[4]) + \
                 c[5]*w**c[6] / (w**2 - c[7]**c[8])
             for k in range(9, len(c), 2):
-                n += c[k]*w**c[k+1]
-            return be.sqrt(n)
+                n = n + c[k]*w**c[k+1]
+            return be.sqrt(be.array(n))
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 4.')
 
@@ -195,7 +195,7 @@ class MaterialFile(BaseMaterial):
         try:
             n = c[0]
             for k in range(1, len(c), 2):
-                n += c[k]*w**c[k+1]
+                n = n + c[k]*w**c[k+1]
             return n
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 5.')
@@ -215,7 +215,7 @@ class MaterialFile(BaseMaterial):
         try:
             n = 1 + c[0]
             for k in range(1, len(c), 2):
-                n += c[k] / (c[k+1] - w**-2)
+                n = n + c[k] / (c[k+1] - w**-2)
             return n
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 6.')
@@ -235,7 +235,7 @@ class MaterialFile(BaseMaterial):
         try:
             n = c[0] + c[1] / (w**2 - 0.028) + c[2] * (1 / (w**2 - 0.028))**2
             for k in range(3, len(c)):
-                n += c[k] * w**(2*(k-2))
+                n = n + c[k] * w**(2*(k-2))
             return n
         except IndexError:
             raise ValueError('Invalid coefficients for dispersion formula 7.')
@@ -275,7 +275,7 @@ class MaterialFile(BaseMaterial):
 
         n = (c[0] + c[1] / (w**2 - c[2]) +
              c[3]*(w - c[4]) / ((w - c[4])**2 + c[5]))
-        return be.sqrt(n)
+        return be.sqrt(be.array(n))
 
     def _tabulated_n(self, w):
         """Calculate the refractive index using tabulated data."""
