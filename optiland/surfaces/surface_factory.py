@@ -159,7 +159,7 @@ class SurfaceFactory:
         radius = kwargs.get('radius', be.inf)
         conic = kwargs.get('conic', 0)
 
-        if be.isinf(radius):
+        if be.isinf(be.array(radius)):
             geometry = Plane(cs)
         else:
             geometry = StandardGeometry(cs, radius, conic)
