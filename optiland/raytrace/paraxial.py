@@ -95,8 +95,8 @@ class ParaxialRayTracer:
             heights.append(be.copy(y))
             slopes.append(be.copy(u))
 
-        heights = be.array(heights)
-        slopes = be.array(slopes)
+        heights = be.array(heights).reshape(-1, 1)
+        slopes = be.array(slopes).reshape(-1, 1)
 
         return heights, slopes
 
