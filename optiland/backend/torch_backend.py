@@ -1,12 +1,15 @@
 """
-This module provides a backend for numerical operations using torch.
+This module provides a backend for numerical operations using torch. It
+implements the same interface as the NumPy backend, allowing for easy switching
+between the two. It also provides a global device setting for PyTorch tensors,
+such that the device can be set to 'cpu' or 'cuda' based on availability and
+user preference.
 
 Kramer Harrison, 2024
 """
 import contextlib
 import numpy as np
 import torch
-from optiland.backend.device import get_device
 
 
 # Link to the underlying library
@@ -32,6 +35,22 @@ class GradMode:
 
 
 grad_mode = GradMode()
+_current_device = 'cpu'
+
+
+def set_device(device: str):
+    """Set the global device for PyTorch tensors."""
+    global _current_device
+    if device not in ['cpu', 'cuda']:
+        raise ValueError("Device must be 'cpu' or 'cuda'.")
+    if device == 'cuda' and not torch.cuda.is_available():
+        raise ValueError("CUDA is not available on this system.")
+    _current_device = device
+
+
+def get_device():
+    """Get the current device."""
+    return _current_device
 
 
 def array(x):
