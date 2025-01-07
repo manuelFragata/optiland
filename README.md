@@ -74,7 +74,7 @@ To install Optiland, choose one of the following options:
 
 3. **Installation with Torch (GPU support)**
 
-    For GPU acceleration, install PyTorch manually first following instructions at the [PyTorch Installation Guide](https://pytorch.org/get-started/locally/). Then, install Optiland:
+    For GPU acceleration, first install PyTorch manually following instructions at: [PyTorch Get Started](https://pytorch.org/get-started/locally/). Then, install Optiland:
 
    ```bash
    pip install optiland
