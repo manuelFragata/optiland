@@ -1,5 +1,5 @@
 import pytest
-from test_utils import assert_allclose  # noqa: F401
+from .test_utils import assert_allclose  # noqa: F401
 import optiland.backend as be
 
 
