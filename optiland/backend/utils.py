@@ -1,18 +1,35 @@
 """
 Utility functions for working with different backends.
 
+To add support for a new backend, add a conversion function to the CONVERTERS
+list.
+
 Kramer Harrison, 2024
 """
 import numpy as np
-import torch
+import importlib
 
 
-def to_numpy(x):
+# Conversion functions for backends
+def torch_to_numpy(obj):
+    if importlib.util.find_spec("torch"):
+        import torch
+        if isinstance(obj, torch.Tensor):
+            return obj.detach().cpu().numpy()
+    raise TypeError
+
+
+CONVERTERS = [torch_to_numpy]
+
+
+def to_numpy(obj):
     """Converts input scalar or array to NumPy array, regardless of backend."""
-    if isinstance(x, (int, float, np.ndarray)):
-        return x
-    elif isinstance(x, torch.Tensor):
-        return x.detach().cpu().numpy()
-    else:
-        raise TypeError(f'Unsupported type for conversion to '
-                        f'NumPy: {type(x)}')
+    if isinstance(obj, (int, float, np.ndarray)):
+        return obj
+
+    for converter in CONVERTERS:
+        try:
+            return converter(obj)
+        except TypeError:
+            continue
+    raise TypeError(f"Unsupported object type: {type(obj)}")
