@@ -65,9 +65,10 @@ class ParaxialRayTracer:
         surfs = self.optic.surface_group.surfaces
 
         if reverse:
-            R = -R[::-1]
-            n = be.roll(n, shift=1)[::-1]
-            pos = pos[-1] - pos[::-1]
+            R = -be.flip(R)
+            n = be.roll(n, shift=1)
+            n = be.flip(n)
+            pos = pos[-1] - be.flip(pos)
             surfs = surfs[::-1]
 
         power = be.diff(n, prepend=be.array([1])) / R
