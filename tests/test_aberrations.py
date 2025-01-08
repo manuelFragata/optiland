@@ -49,11 +49,11 @@ def simple_singlet():
 
 
 class TestDoubleGaussAberrations:
-    def test_init(self, double_gauss, backend):
+    def test_init(self, double_gauss):
         aberrations = Aberrations(double_gauss)
         assert aberrations.optic == double_gauss
 
-    def test_seidels(self, double_gauss, backend):
+    def test_seidels(self, double_gauss):
         S = double_gauss.aberrations.seidels()
         assert S[0] == pytest.approx(-0.003929457875534847, abs=1e-9)
         assert S[1] == pytest.approx(0.0003954597633218682, abs=1e-9)
@@ -61,7 +61,7 @@ class TestDoubleGaussAberrations:
         assert S[3] == pytest.approx(-0.016264753735226404, abs=1e-9)
         assert S[4] == pytest.approx(-0.046484107476755930, abs=1e-9)
 
-    def test_third_order(self, double_gauss, backend):
+    def test_third_order(self, double_gauss):
         data = double_gauss.aberrations.third_order()
         TSC, SC, CC, TCC, TAC, AC, TPC, PC, DC, TAchC, LchC, TchC, S = data
         assert np.sum(TSC) == pytest.approx(-0.01964728937767421, abs=1e-9)
@@ -82,7 +82,7 @@ class TestDoubleGaussAberrations:
         assert S[3] == pytest.approx(-0.016264753735226404, abs=1e-9)
         assert S[4] == pytest.approx(-0.046484107476755930, abs=1e-9)
 
-    def test_third_order_all_functions(self, double_gauss, backend):
+    def test_third_order_all_functions(self, double_gauss):
         TSC = double_gauss.aberrations.TSC()
         SC = double_gauss.aberrations.SC()
         CC = double_gauss.aberrations.CC()
@@ -111,11 +111,11 @@ class TestDoubleGaussAberrations:
 
 
 class TestEdmundSinglet:
-    def test_init(self, edmund_singlet, backend):
+    def test_init(self, edmund_singlet):
         aberrations = Aberrations(edmund_singlet)
         assert aberrations.optic == edmund_singlet
 
-    def test_seidels(self, edmund_singlet, backend):
+    def test_seidels(self, edmund_singlet):
         S = edmund_singlet.aberrations.seidels()
         assert S[0] == pytest.approx(-1.730769175588275, abs=1e-9)
         assert S[1] == pytest.approx(0.14253720449059704, abs=1e-9)
@@ -123,7 +123,7 @@ class TestEdmundSinglet:
         assert S[3] == pytest.approx(-0.22120089147910937, abs=1e-9)
         assert S[4] == pytest.approx(-0.020854909613614383, abs=1e-9)
 
-    def test_third_order(self, edmund_singlet, backend):
+    def test_third_order(self, edmund_singlet):
         data = edmund_singlet.aberrations.third_order()
         TSC, SC, CC, TCC, TAC, AC, TPC, PC, DC, TAchC, LchC, TchC, S = data
         assert np.sum(TSC) == pytest.approx(-1.7306053598822728, abs=1e-9)
@@ -144,7 +144,7 @@ class TestEdmundSinglet:
         assert S[3] == pytest.approx(-0.22120089147910937, abs=1e-9)
         assert S[4] == pytest.approx(-0.020854909613614383, abs=1e-9)
 
-    def test_third_order_all_functions(self, edmund_singlet, backend):
+    def test_third_order_all_functions(self, edmund_singlet):
         TSC = edmund_singlet.aberrations.TSC()
         SC = edmund_singlet.aberrations.SC()
         CC = edmund_singlet.aberrations.CC()
@@ -173,11 +173,11 @@ class TestEdmundSinglet:
 
 
 class TestSingletStopTwo:
-    def test_init(self, singlet_stop_surf_two, backend):
+    def test_init(self, singlet_stop_surf_two):
         aberrations = Aberrations(singlet_stop_surf_two)
         assert aberrations.optic == singlet_stop_surf_two
 
-    def test_seidels(self, singlet_stop_surf_two, backend):
+    def test_seidels(self, singlet_stop_surf_two):
         S = singlet_stop_surf_two.aberrations.seidels()
         assert S[0] == pytest.approx(-0.0326050034268675, abs=1e-9)
         assert S[1] == pytest.approx(-0.0004386784359568394, abs=1e-9)
@@ -185,7 +185,7 @@ class TestSingletStopTwo:
         assert S[3] == pytest.approx(-0.00692002070366785, abs=1e-9)
         assert S[4] == pytest.approx(0.0016544791002946339, abs=1e-9)
 
-    def test_third_order(self, singlet_stop_surf_two, backend):
+    def test_third_order(self, singlet_stop_surf_two):
         data = singlet_stop_surf_two.aberrations.third_order()
         TSC, SC, CC, TCC, TAC, AC, TPC, PC, DC, TAchC, LchC, TchC, S = data
         assert np.sum(TSC) == pytest.approx(-0.1323786953158293, abs=1e-9)
@@ -206,7 +206,7 @@ class TestSingletStopTwo:
         assert S[3] == pytest.approx(-0.00692002070366785, abs=1e-9)
         assert S[4] == pytest.approx(0.0016544791002946339, abs=1e-9)
 
-    def test_third_order_all_functions(self, singlet_stop_surf_two, backend):
+    def test_third_order_all_functions(self, singlet_stop_surf_two):
         TSC = singlet_stop_surf_two.aberrations.TSC()
         SC = singlet_stop_surf_two.aberrations.SC()
         CC = singlet_stop_surf_two.aberrations.CC()
@@ -235,7 +235,7 @@ class TestSingletStopTwo:
 
 
 class TestSimpleSinglet:
-    def test_seidels(self, simple_singlet, backend):
+    def test_seidels(self, simple_singlet):
         S = simple_singlet.aberrations.seidels()
         assert S[0] == 0.0
         assert S[1] == 0.0
