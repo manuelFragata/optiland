@@ -24,8 +24,11 @@ CONVERTERS = [torch_to_numpy]
 
 def to_numpy(obj):
     """Converts input scalar or array to NumPy array, regardless of backend."""
-    if isinstance(obj, (int, float, np.ndarray)):
+    if isinstance(obj, np.ndarray):
         return obj
+
+    elif isinstance(obj, (int, float)):
+        return np.array([obj])
 
     for converter in CONVERTERS:
         try:
