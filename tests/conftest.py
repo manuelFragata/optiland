@@ -14,7 +14,8 @@ def backend(request):
     be.set_backend(backend_name)
     if backend_name == 'torch':
         be.set_device('cpu')  # Ensure torch uses the CPU for testing
-    return backend_name
+    yield
+    be.set_backend('numpy')  # Reset the backend to numpy after the test
 
 
 def pytest_configure(config):
