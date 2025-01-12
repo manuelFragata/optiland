@@ -4,23 +4,13 @@ from unittest.mock import patch
 from optiland.optic import Optic
 from optiland import analysis
 from optiland.samples.objectives import TripletTelescopeObjective, CookeTriplet
+from .utils import assert_allclose
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.use('Agg')  # use non-interactive backend for testing
 
 
-@pytest.fixture
-def cooke_triplet():
-    return CookeTriplet()
-
-
-@pytest.fixture
-def telescope_objective():
-    return TripletTelescopeObjective()
-
-
-@pytest.fixture
-def triplet_four_fields():
+def triplet():
     lens = Optic()
 
     lens.surface_group.surfaces = []
@@ -55,47 +45,51 @@ def triplet_four_fields():
 
 
 class TestCookeTripetSpotDiagram:
-    def test_spot_geometric_radius(self, cooke_triplet):
+    def test_spot_geometric_radius(self, backend):
+        cooke_triplet = CookeTriplet()
         spot = analysis.SpotDiagram(cooke_triplet)
         geo_radius = spot.geometric_spot_radius()
 
-        assert geo_radius[0][0] == pytest.approx(0.00597244087781, abs=1e-9)
-        assert geo_radius[0][1] == pytest.approx(0.00628645771124, abs=1e-9)
-        assert geo_radius[0][2] == pytest.approx(0.00931911440064, abs=1e-9)
+        assert_allclose(geo_radius[0][0], 0.00597244087781)
+        assert_allclose(geo_radius[0][1], 0.00628645771124)
+        assert_allclose(geo_radius[0][2], 0.00931911440064)
 
-        assert geo_radius[1][0] == pytest.approx(0.03717783072826, abs=1e-9)
-        assert geo_radius[1][1] == pytest.approx(0.03864613392848, abs=1e-9)
-        assert geo_radius[1][2] == pytest.approx(0.04561512437816, abs=1e-9)
+        assert_allclose(geo_radius[1][0], 0.03717783072826)
+        assert_allclose(geo_radius[1][1], 0.03864613392848)
+        assert_allclose(geo_radius[1][2], 0.04561512437816)
 
-        assert geo_radius[2][0] == pytest.approx(0.01951655430245, abs=1e-9)
-        assert geo_radius[2][1] == pytest.approx(0.02342659090311, abs=1e-9)
-        assert geo_radius[2][2] == pytest.approx(0.03747033587405, abs=1e-9)
+        assert_allclose(geo_radius[2][0], 0.01951655430245)
+        assert_allclose(geo_radius[2][1], 0.02342659090311)
+        assert_allclose(geo_radius[2][2], 0.03747033587405)
 
-    def test_spot_rms_radius(self, cooke_triplet):
+    def test_spot_rms_radius(self, backend):
+        cooke_triplet = CookeTriplet()
         spot = analysis.SpotDiagram(cooke_triplet)
         rms_radius = spot.rms_spot_radius()
 
-        assert rms_radius[0][0] == pytest.approx(0.003791335461448, abs=1e-9)
-        assert rms_radius[0][1] == pytest.approx(0.004293689564257, abs=1e-9)
-        assert rms_radius[0][2] == pytest.approx(0.006195618755672, abs=1e-9)
+        assert_allclose(rms_radius[0][0], 0.003791335461448)
+        assert_allclose(rms_radius[0][1], 0.004293689564257)
+        assert_allclose(rms_radius[0][2], 0.006195618755672)
 
-        assert rms_radius[1][0] == pytest.approx(0.015694600107671, abs=1e-9)
-        assert rms_radius[1][1] == pytest.approx(0.016786721284464, abs=1e-9)
-        assert rms_radius[1][2] == pytest.approx(0.019109151416248, abs=1e-9)
+        assert_allclose(rms_radius[1][0], 0.015694600107671)
+        assert_allclose(rms_radius[1][1], 0.016786721284464)
+        assert_allclose(rms_radius[1][2], 0.019109151416248)
 
-        assert rms_radius[2][0] == pytest.approx(0.013229165357157, abs=1e-9)
-        assert rms_radius[2][1] == pytest.approx(0.012081348897953, abs=1e-9)
-        assert rms_radius[2][2] == pytest.approx(0.013596802321537, abs=1e-9)
+        assert_allclose(rms_radius[2][0], 0.013229165357157)
+        assert_allclose(rms_radius[2][1], 0.012081348897953)
+        assert_allclose(rms_radius[2][2], 0.013596802321537)
 
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_diagram(self, mock_show, cooke_triplet):
+    def test_view_spot_diagram(self, mock_show, backend):
+        cooke_triplet = CookeTriplet()
         spot = analysis.SpotDiagram(cooke_triplet)
         spot.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_diagram_larger_fig(self, mock_show, cooke_triplet):
+    def test_view_spot_diagram_larger_fig(self, mock_show, backend):
+        cooke_triplet = CookeTriplet()
         spot = analysis.SpotDiagram(cooke_triplet)
         spot.view(figsize=(20, 10))
         mock_show.assert_called_once()
@@ -104,15 +98,16 @@ class TestCookeTripetSpotDiagram:
 
 class TestTripetSpotDiagram:
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_diagram(self, mock_show, triplet_four_fields):
+    def test_view_spot_diagram(self, mock_show):
+        triplet_four_fields = triplet()
         spot = analysis.SpotDiagram(triplet_four_fields)
         spot.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_diagram_larger_fig(self, mock_show,
-                                          triplet_four_fields):
+    def test_view_spot_diagram_larger_fig(self, mock_show):
+        triplet_four_fields = triplet()
         spot = analysis.SpotDiagram(triplet_four_fields)
         spot.view(figsize=(20, 10))
         mock_show.assert_called_once()
@@ -122,14 +117,16 @@ class TestTripetSpotDiagram:
 class TestCookeTripletEncircledEnergy:
 
     @patch('matplotlib.pyplot.show')
-    def test_view_encircled_energy(self, mock_show, cooke_triplet):
+    def test_view_encircled_energy(self, mock_show):
+        cooke_triplet = CookeTriplet()
         encircled_energy = analysis.EncircledEnergy(cooke_triplet)
         encircled_energy.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_encircled_energy_larger_fig(self, mock_show, cooke_triplet):
+    def test_view_encircled_energy_larger_fig(self, mock_show):
+        cooke_triplet = CookeTriplet()
         encircled_energy = analysis.EncircledEnergy(cooke_triplet)
         encircled_energy.view(figsize=(20, 10))
         mock_show.assert_called_once()
@@ -137,7 +134,8 @@ class TestCookeTripletEncircledEnergy:
 
 
 class TestCookeTripletRayFan:
-    def test_ray_fan(self, cooke_triplet):
+    def test_ray_fan(self,):
+        cooke_triplet = CookeTriplet()
         fan = analysis.RayFan(cooke_triplet)
 
         assert fan.data['Px'][0] == -1
@@ -146,96 +144,62 @@ class TestCookeTripletRayFan:
         assert fan.data['Py'][0] == -1
         assert fan.data['Py'][-1] == 1
 
-        assert fan.data['(0.0, 0.0)']['0.48']['x'][0] == \
-            pytest.approx(0.00238814980958324, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.48']['x'][-1] == \
-            pytest.approx(-0.00238814980958324, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.48']['y'][0] == \
-            pytest.approx(0.00238814980958324, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.48']['y'][-1] == \
-            pytest.approx(-0.00238814980958324, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.48']['x'][0], 0.00238814980958324)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.48']['x'][-1], -0.00238814980958324)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.48']['y'][0], 0.00238814980958324)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.48']['y'][-1], -0.00238814980958324)
 
-        assert fan.data['(0.0, 0.0)']['0.55']['x'][0] == \
-            pytest.approx(0.004195677081323623, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.55']['x'][-1] == \
-            pytest.approx(-0.004195677081323623, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.55']['y'][0] == \
-            pytest.approx(0.004195677081323623, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.55']['y'][-1] == \
-            pytest.approx(-0.004195677081323623, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.55']['x'][0], 0.004195677081323623)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.55']['x'][-1], -0.004195677081323623)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.55']['y'][0], 0.004195677081323623)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.55']['y'][-1], -0.004195677081323623)
 
-        assert fan.data['(0.0, 0.0)']['0.65']['x'][0] == \
-            pytest.approx(-8.284696919602652e-06, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.65']['x'][-1] == \
-            pytest.approx(8.284696919602652e-06, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.65']['y'][0] == \
-            pytest.approx(-8.284696919602652e-06, abs=1e-9)
-        assert fan.data['(0.0, 0.0)']['0.65']['y'][-1] == \
-            pytest.approx(8.284696919602652e-06, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.65']['x'][0], -8.284696919602652e-06)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.65']['x'][-1], 8.284696919602652e-06)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.65']['y'][0], -8.284696919602652e-06)
+        assert_allclose(fan.data['(0.0, 0.0)']['0.65']['y'][-1], 8.284696919602652e-06)
 
-        assert fan.data['(0.0, 0.7)']['0.48']['x'][0] == \
-            pytest.approx(0.01973142095198721, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.48']['x'][-1] == \
-            pytest.approx(-0.01973142095198721, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.48']['y'][0] == \
-            pytest.approx(-0.023207115035676296, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.48']['y'][-1] == \
-            pytest.approx(0.03928464835618861, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.48']['x'][0], 0.01973142095198721)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.48']['x'][-1], -0.01973142095198721)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.48']['y'][0], -0.023207115035676296)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.48']['y'][-1], 0.03928464835618861)
 
-        assert fan.data['(0.0, 0.7)']['0.55']['x'][0] == \
-            pytest.approx(0.021420191179537973, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.55']['x'][-1] == \
-            pytest.approx(-0.021420191179537973, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.55']['y'][0] == \
-            pytest.approx(-0.024812371459915994, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.55']['y'][-1] == \
-            pytest.approx(0.04075295155640113, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.55']['x'][0], 0.021420191179537973)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.55']['x'][-1], -0.021420191179537973)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.55']['y'][0], -0.024812371459915994)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.55']['y'][-1], 0.04075295155640113)
 
-        assert fan.data['(0.0, 0.7)']['0.65']['x'][0] == \
-            pytest.approx(0.017025487217305013, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.65']['x'][-1] == \
-            pytest.approx(-0.017025487217305013, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.65']['y'][0] == \
-            pytest.approx(-0.03229666187094615, abs=1e-9)
-        assert fan.data['(0.0, 0.7)']['0.65']['y'][-1] == \
-            pytest.approx(0.047721942006075935, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.65']['x'][0], 0.017025487217305013)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.65']['x'][-1], -0.017025487217305013)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.65']['y'][0], -0.03229666187094615)
+        assert_allclose(fan.data['(0.0, 0.7)']['0.65']['y'][-1], 0.047721942006075935)
 
-        assert fan.data['(0.0, 1.0)']['0.48']['x'][0] == \
-            pytest.approx(0.01563881685548374, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.48']['x'][-1] == \
-            pytest.approx(-0.01563881685548374, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.48']['y'][0] == \
-            pytest.approx(-0.0044989771745065354, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.48']['y'][-1] == \
-            pytest.approx(0.013000385049824814, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.48']['x'][0], 0.01563881685548374)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.48']['x'][-1], -0.01563881685548374)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.48']['y'][0], -0.0044989771745065354)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.48']['y'][-1], 0.013000385049824814)
 
-        assert fan.data['(0.0, 1.0)']['0.55']['x'][0] == \
-            pytest.approx(0.016936433773790505, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.55']['x'][-1] == \
-            pytest.approx(-0.016936433773790505, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.55']['y'][0] == \
-            pytest.approx(-0.01705141007843025, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.55']['y'][-1] == \
-            pytest.approx(0.022501847359645666, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.55']['x'][0], 0.016936433773790505)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.55']['x'][-1], -0.016936433773790505)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.55']['y'][0], -0.01705141007843025)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.55']['y'][-1], 0.022501847359645666)
 
-        assert fan.data['(0.0, 1.0)']['0.65']['x'][0] == \
-            pytest.approx(0.01214534602206907, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.65']['x'][-1] == \
-            pytest.approx(-0.01214534602206907, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.65']['y'][0] == \
-            pytest.approx(-0.033957537601747134, abs=1e-9)
-        assert fan.data['(0.0, 1.0)']['0.65']['y'][-1] == \
-            pytest.approx(0.036545592330593735, abs=1e-9)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.65']['x'][0], 0.01214534602206907)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.65']['x'][-1], -0.01214534602206907)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.65']['y'][0], -0.033957537601747134)
+        assert_allclose(fan.data['(0.0, 1.0)']['0.65']['y'][-1], 0.036545592330593735)
 
     @patch('matplotlib.pyplot.show')
-    def test_view_ray_fan(self, mock_show, cooke_triplet):
+    def test_view_ray_fan(self, mock_show):
+        cooke_triplet = CookeTriplet()
         ray_fan = analysis.RayFan(cooke_triplet)
         ray_fan.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_ray_fan_larger_fig(self, mock_show, cooke_triplet):
+    def test_view_ray_fan_larger_fig(self, mock_show):
+        cooke_triplet = CookeTriplet()
         ray_fan = analysis.RayFan(cooke_triplet)
         ray_fan.view(figsize=(20, 10))
         mock_show.assert_called_once()
@@ -244,14 +208,16 @@ class TestCookeTripletRayFan:
 
 class TestTelescopeTripletYYbar:
     @patch('matplotlib.pyplot.show')
-    def test_view_yybar(self, mock_show, telescope_objective):
+    def test_view_yybar(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         yybar = analysis.YYbar(telescope_objective)
         yybar.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_yybar_larger_fig(self, mock_show, telescope_objective):
+    def test_view_yybar_larger_fig(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         yybar = analysis.YYbar(telescope_objective)
         yybar.view(figsize=(12.4, 10))
         mock_show.assert_called_once()
@@ -259,7 +225,8 @@ class TestTelescopeTripletYYbar:
 
 
 class TestTelescopeTripletDistortion:
-    def test_distortion_values(self, telescope_objective):
+    def test_distortion_values(self):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.Distortion(telescope_objective)
 
         assert dist.data[0][0] == pytest.approx(0.0, abs=1e-9)
@@ -274,7 +241,8 @@ class TestTelescopeTripletDistortion:
         assert dist.data[2][-1] == \
             pytest.approx(0.005720392850412076, abs=1e-9)
 
-    def test_f_theta_distortion(self, telescope_objective):
+    def test_f_theta_distortion(self):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.Distortion(telescope_objective,
                                    distortion_type='f-theta')
 
@@ -290,19 +258,22 @@ class TestTelescopeTripletDistortion:
         assert dist.data[2][-1] == \
             pytest.approx(0.015876125134060767, abs=1e-9)
 
-    def test_invalid_distortion_type(self, telescope_objective):
+    def test_invalid_distortion_type(self):
+        telescope_objective = TripletTelescopeObjective()
         with pytest.raises(ValueError):
             analysis.Distortion(telescope_objective, distortion_type='invalid')
 
     @patch('matplotlib.pyplot.show')
-    def test_view_distortion(self, mock_show, telescope_objective):
+    def test_view_distortion(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.Distortion(telescope_objective)
         dist.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_distortion_larger_fig(self, mock_show, telescope_objective):
+    def test_view_distortion_larger_fig(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.Distortion(telescope_objective)
         dist.view(figsize=(12.4, 10))
         mock_show.assert_called_once()
@@ -310,7 +281,8 @@ class TestTelescopeTripletDistortion:
 
 
 class TestTelescopeTripletGridDistortion:
-    def test_grid_distortion_values(self, telescope_objective):
+    def test_grid_distortion_values(self):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.GridDistortion(telescope_objective)
 
         assert dist.data['max_distortion'] == \
@@ -341,7 +313,8 @@ class TestTelescopeTripletGridDistortion:
         assert dist.data['yp'][1, 5] == pytest.approx(-0.9599069415493584,
                                                       abs=1e-9)
 
-    def test_f_theta_distortion(self, telescope_objective):
+    def test_f_theta_distortion(self):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.GridDistortion(telescope_objective,
                                        distortion_type='f-theta')
 
@@ -373,21 +346,23 @@ class TestTelescopeTripletGridDistortion:
         assert dist.data['yp'][1, 5] == pytest.approx(-0.9598774602686547,
                                                       abs=1e-9)
 
-    def test_invalid_distortion_type(self, telescope_objective):
+    def test_invalid_distortion_type(self):
+        telescope_objective = TripletTelescopeObjective()
         with pytest.raises(ValueError):
             analysis.GridDistortion(telescope_objective,
                                     distortion_type='invalid')
 
     @patch('matplotlib.pyplot.show')
-    def test_view_grid_distortion(self, mock_show, telescope_objective):
+    def test_view_grid_distortion(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.GridDistortion(telescope_objective)
         dist.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_grid_distortion_larger_fig(self, mock_show,
-                                             telescope_objective):
+    def test_view_grid_distortion_larger_fig(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         dist = analysis.GridDistortion(telescope_objective)
         dist.view(figsize=(12.4, 10))
         mock_show.assert_called_once()
@@ -395,21 +370,24 @@ class TestTelescopeTripletGridDistortion:
 
 
 class TestTelescopeTripletFieldCurvature:
-    def test_field_curvature_init(self, telescope_objective):
+    def test_field_curvature_init(self):
+        telescope_objective = TripletTelescopeObjective()
         field_curvature = analysis.FieldCurvature(telescope_objective)
         assert field_curvature.optic == telescope_objective
         assert field_curvature.wavelengths == \
             telescope_objective.wavelengths.get_wavelengths()
         assert field_curvature.num_points == 128
 
-    def test_field_curvature_init_with_wavelength(self, telescope_objective):
+    def test_field_curvature_init_with_wavelength(self):
+        telescope_objective = TripletTelescopeObjective()
         field_curvature = analysis.FieldCurvature(telescope_objective,
                                                   wavelengths=[0.5, 0.6])
         assert field_curvature.optic == telescope_objective
         assert field_curvature.wavelengths == [0.5, 0.6]
         assert field_curvature.num_points == 128
 
-    def test_field_curvature_init_with_num_points(self, telescope_objective):
+    def test_field_curvature_init_with_num_points(self):
+        telescope_objective = TripletTelescopeObjective()
         num_points = 256
         field_curvature = analysis.FieldCurvature(telescope_objective,
                                                   num_points=num_points)
@@ -418,8 +396,8 @@ class TestTelescopeTripletFieldCurvature:
             telescope_objective.wavelengths.get_wavelengths()
         assert field_curvature.num_points == num_points
 
-    def test_field_curvature_init_with_all_parameters(self,
-                                                      telescope_objective):
+    def test_field_curvature_init_with_all_parameters(self):
+        telescope_objective = TripletTelescopeObjective()
         num_points = 256
         field_curvature = analysis.FieldCurvature(telescope_objective,
                                                   wavelengths=[0.55],
@@ -429,13 +407,15 @@ class TestTelescopeTripletFieldCurvature:
         assert field_curvature.num_points == num_points
 
     @patch('matplotlib.pyplot.show')
-    def test_field_curvature_view(self, mock_show, telescope_objective):
+    def test_field_curvature_view(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         field_curvature = analysis.FieldCurvature(telescope_objective)
         field_curvature.view()
         mock_show.assert_called_once()
         plt.close()
 
-    def test_field_curvature_generate_data(self, telescope_objective):
+    def test_field_curvature_generate_data(self):
+        telescope_objective = TripletTelescopeObjective()
         f = analysis.FieldCurvature(telescope_objective)
 
         assert f.data[0][0][89] == pytest.approx(-0.0013062169220806206,
@@ -504,28 +484,31 @@ class TestTelescopeTripletFieldCurvature:
 
 class TestSpotVsField:
 
-    def test_rms_spot_size_vs_field_initialization(self, telescope_objective):
+    def test_rms_spot_size_vs_field_initialization(self):
+        telescope_objective = TripletTelescopeObjective()
         spot_vs_field = analysis.RmsSpotSizeVsField(telescope_objective)
         assert spot_vs_field.num_fields == 64
         assert np.array_equal(spot_vs_field._field[:, 1],
                               np.linspace(0, 1, 64))
 
-    def test_rms_spot_radius(self, telescope_objective):
+    def test_rms_spot_radius(self):
+        telescope_objective = TripletTelescopeObjective()
         spot_vs_field = analysis.RmsSpotSizeVsField(telescope_objective)
         spot_size = spot_vs_field._spot_size
         assert spot_size.shape == \
             (64, len(telescope_objective.wavelengths.get_wavelengths()))
 
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_vs_field(self, mock_show, telescope_objective):
+    def test_view_spot_vs_field(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         spot_vs_field = analysis.RmsSpotSizeVsField(telescope_objective)
         spot_vs_field.view()
         mock_show.assert_called_once()
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_spot_vs_field_larger_fig(self, mock_show,
-                                           telescope_objective):
+    def test_view_spot_vs_field_larger_fig(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         spot_vs_field = analysis.RmsSpotSizeVsField(telescope_objective)
         spot_vs_field.view(figsize=(12.4, 10))
         mock_show.assert_called_once()
@@ -534,14 +517,16 @@ class TestSpotVsField:
 
 class TestWavefrontErrorVsField:
 
-    def test_rms_wave_init(self, telescope_objective):
+    def test_rms_wave_init(self):
+        telescope_objective = TripletTelescopeObjective()
         wavefront_error_vs_field = analysis.RmsWavefrontErrorVsField(
             telescope_objective)
         assert wavefront_error_vs_field.num_fields == 32
         assert np.array_equal(wavefront_error_vs_field._field[:, 1],
                               np.linspace(0, 1, 32))
 
-    def test_rms_wave(self, telescope_objective):
+    def test_rms_wave(self):
+        telescope_objective = TripletTelescopeObjective()
         wavefront_error_vs_field = analysis.RmsWavefrontErrorVsField(
             telescope_objective)
         wavefront_error = wavefront_error_vs_field._wavefront_error
@@ -549,7 +534,8 @@ class TestWavefrontErrorVsField:
             (32, len(telescope_objective.wavelengths.get_wavelengths()))
 
     @patch('matplotlib.pyplot.show')
-    def test_view_wave(self, mock_show, telescope_objective):
+    def test_view_wave(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         wavefront_error_vs_field = analysis.RmsWavefrontErrorVsField(
             telescope_objective)
         wavefront_error_vs_field.view()
@@ -557,7 +543,8 @@ class TestWavefrontErrorVsField:
         plt.close()
 
     @patch('matplotlib.pyplot.show')
-    def test_view_wave_larger_fig(self, mock_show, telescope_objective):
+    def test_view_wave_larger_fig(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         wavefront_error_vs_field = analysis.RmsWavefrontErrorVsField(
             telescope_objective)
         wavefront_error_vs_field.view(figsize=(12.4, 10))
@@ -567,14 +554,16 @@ class TestWavefrontErrorVsField:
 
 class TestPupilAberration:
 
-    def test_initialization(self, telescope_objective):
+    def test_initialization(self):
+        telescope_objective = TripletTelescopeObjective()
         pupil_ab = analysis.PupilAberration(telescope_objective)
         assert pupil_ab.optic == telescope_objective
         assert pupil_ab.fields == [(0.0, 0.0), (0.0, 0.7), (0.0, 1.0)]
         assert pupil_ab.wavelengths == [0.4861, 0.5876, 0.6563]
         assert pupil_ab.num_points == 257  # num_points is forced to be odd
 
-    def test_generate_data(self, telescope_objective):
+    def test_generate_data(self):
+        telescope_objective = TripletTelescopeObjective()
         pupil_ab = analysis.PupilAberration(telescope_objective)
         data = pupil_ab._generate_data()
         assert 'Px' in data
@@ -589,7 +578,8 @@ class TestPupilAberration:
         assert 'y' in data['(0.0, 0.0)']['0.4861']
 
     @patch('matplotlib.pyplot.show')
-    def test_view(self, mock_show, telescope_objective):
+    def test_view(self, mock_show):
+        telescope_objective = TripletTelescopeObjective()
         pupil_ab = analysis.PupilAberration(telescope_objective)
         pupil_ab.view()
         mock_show.assert_called_once()
