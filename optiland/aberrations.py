@@ -74,6 +74,7 @@ class Aberrations:
         S = self._sum_seidels([TSC, CC, TAC, TPC, DC])
 
         TSC = be.ravel(be.array(TSC))
+        SC = be.ravel(be.array(SC))
         CC = be.ravel(be.array(CC))
         TAC = be.ravel(be.array(TAC))
         TPC = be.ravel(be.array(TPC))
