@@ -71,7 +71,7 @@ class GridDistortion:
         ax.spines['top'].set_visible(False)
 
         max_distortion = data['max_distortion']
-        ax.set_title(f'Max Distortion: {max_distortion:.2f}%')
+        ax.set_title(f'Max Distortion: {float(max_distortion):.2f}%')
         fig.tight_layout()
         plt.show()
 
