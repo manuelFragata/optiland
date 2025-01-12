@@ -477,8 +477,7 @@ class TestSpotVsField:
         telescope_objective = TripletTelescopeObjective()
         spot_vs_field = analysis.RmsSpotSizeVsField(telescope_objective)
         assert spot_vs_field.num_fields == 64
-        assert np.array_equal(spot_vs_field._field[:, 1],
-                              np.linspace(0, 1, 64))
+        assert_allclose(spot_vs_field._field[:, 1], np.linspace(0, 1, 64))
 
     def test_rms_spot_radius(self, backend):
         telescope_objective = TripletTelescopeObjective()
@@ -511,8 +510,8 @@ class TestWavefrontErrorVsField:
         wavefront_error_vs_field = analysis.RmsWavefrontErrorVsField(
             telescope_objective)
         assert wavefront_error_vs_field.num_fields == 32
-        assert np.array_equal(wavefront_error_vs_field._field[:, 1],
-                              np.linspace(0, 1, 32))
+        assert_allclose(wavefront_error_vs_field._field[:, 1],
+                        np.linspace(0, 1, 32))
 
     def test_rms_wave(self, backend):
         telescope_objective = TripletTelescopeObjective()
