@@ -60,7 +60,7 @@ class Aberrations:
         LchC = []
         TchC = []
 
-        TSC, CC, TAC, TPC, DC = self._compute_seidel_terms()
+        TSC, CC, TAC, TPC, DC = self.compute_seidel_terms()
 
         for k in range(1, self._N-1):
             TAchC.append(self._TAchC_term(k))
@@ -86,14 +86,32 @@ class Aberrations:
 
         return TSC, SC, CC, CC*3, TAC, AC, TPC, PC, DC, TAchC, LchC, TchC, S
 
+    def compute_seidel_terms(self):
+        """Compute the Seidel aberration terms"""
+        self._precalculations()
+
+        TSC = []
+        CC = []
+        TAC = []
+        TPC = []
+        DC = []
+
+        for k in range(1, self._N-1):
+            TSC.append(self._TSC_term(k))
+            CC.append(self._CC_term(k))
+            TAC.append(self._TAC_term(k))
+            TPC.append(self._TPC_term(k))
+            DC.append(self._DC_term(k))
+
+        return TSC, CC, TAC, TPC, DC
+
     def seidels(self):
         """Compute the seidel aberration coefficients
 
         Returns:
             S (List[float]): Seidel aberration coefficients
         """
-        self._precalculations()
-        TSC, CC, TAC, TPC, DC = self._compute_seidel_terms()
+        TSC, CC, TAC, TPC, DC = self.compute_seidel_terms()
         S = self._sum_seidels([TSC, CC, TAC, TPC, DC])
         return S.squeeze()
 
@@ -329,23 +347,6 @@ class Aberrations:
                                  self._yb[k] *
                                  (self._ub[k] + self._ip[k-1]) /
                                  denom)[0]
-
-    def _compute_seidel_terms(self):
-        """Compute the Seidel aberration terms"""
-        TSC = []
-        CC = []
-        TAC = []
-        TPC = []
-        DC = []
-
-        for k in range(1, self._N-1):
-            TSC.append(self._TSC_term(k))
-            CC.append(self._CC_term(k))
-            TAC.append(self._TAC_term(k))
-            TPC.append(self._TPC_term(k))
-            DC.append(self._DC_term(k))
-
-        return TSC, CC, TAC, TPC, DC
 
     def _sum_seidels(self, seidels):
         """Sum the Seidel aberration coefficients"""
