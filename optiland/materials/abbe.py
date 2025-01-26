@@ -7,7 +7,7 @@ coefficient is ignored in this model and is always set to zero.
 
 Kramer Harrison, 2024
 """
-import os
+import pkg_resources
 import optiland.backend as be
 from optiland.materials.base import BaseMaterial
 
@@ -39,6 +39,8 @@ class AbbeMaterial(BaseMaterial):
         Returns:
             float: The refractive index of the material.
         """
+        if be.any(wavelength < 0.380) or be.any(wavelength > 0.750):
+            raise ValueError('Wavelength out of range for this model.')
         return be.polyval(self._p, wavelength)
 
     def k(self, wavelength):
@@ -65,11 +67,9 @@ class AbbeMaterial(BaseMaterial):
         X_poly = be.hstack([X**i for i in range(1, 4)])
 
         # File contains fit coefficients
-        coefficients_file = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '../../database/glass_model_coefficients.npy'
-            )
-
+        coefficients_file = pkg_resources.resource_filename(
+            'optiland.database', 'glass_model_coefficients.npy'
+        )
         coefficients = be.load(coefficients_file)
         return X_poly @ coefficients
 
