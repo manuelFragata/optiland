@@ -53,7 +53,9 @@ class Plane(BaseGeometry):
             np.ndarray: The propagation distance to the plane geometry for
                 each ray.
         """
-        t = -rays.z / rays.N
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            t = -rays.z / rays.N
 
         # if rays do not hit plane, set to NaN
         t[t < 0] = be.nan

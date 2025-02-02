@@ -95,7 +95,83 @@ class RayOperand:
         """
         optic.trace_generic(Hx, Hy, Px, Py, wavelength)
         return optic.surface_group.z[surface_number, 0]
+    
+    @staticmethod
+    def x_intercept_lcs(optic, surface_number, Hx, Hy, Px, Py, wavelength):
+        """
+        Calculates the x-coordinate of the intercept point on a specific
+            surface in its lcs, ie wrt to its vertex.
 
+        Args:
+            optic: The optic object.
+            surface_number: The number of the surface.
+            Hx: The normalized x field coordinate.
+            Hy: The normalized y field coordinate.
+            Px: The normalized x pupil coordinate.
+            Py: The normalized y pupil coordinate.
+            wavelength: The wavelength of the ray.
+
+        Returns:
+            The x-coordinate of the intercept point.
+        """
+        optic.trace_generic(Hx, Hy, Px, Py, wavelength)
+        intercept = optic.surface_group.x[surface_number, 0]
+        decenter = optic.surface_group.surfaces[surface_number].geometry.cs.x
+        return intercept - decenter
+
+    @staticmethod
+    def y_intercept_lcs(optic, surface_number, Hx, Hy, Px, Py, wavelength):
+        """
+        Calculates the y-coordinate of the intercept point on a specific
+            surface in its lcs, ie wrt to its vertex.
+
+        Args:
+            optic: The optic object.
+            surface_number: The number of the surface.
+            Hx: The normalized x field coordinate.
+            Hy: The normalized y field coordinate.
+            Px: The normalized x pupil coordinate.
+            Py: The normalized y pupil coordinate.
+            wavelength: The wavelength of the ray.
+
+        Returns:
+            The y-coordinate of the intercept point.
+        """
+        optic.trace_generic(Hx, Hy, Px, Py, wavelength)
+        intercept = optic.surface_group.y[surface_number, 0]
+        decenter = optic.surface_group.surfaces[surface_number].geometry.cs.y
+        return intercept - decenter
+
+    @staticmethod
+    def z_intercept_lcs(optic, surface_number, Hx, Hy, Px, Py, wavelength):
+        """
+        Calculates the z-coordinate of the intercept point on a specific
+            surface in its lcs, ie wrt to its vertex.
+
+        Args:
+            optic: The optic object.
+            surface_number: The number of the surface.
+            Hx: The normalized x field coordinate.
+            Hy: The normalized y field coordinate.
+            Px: The normalized x pupil coordinate.
+            Py: The normalized y pupil coordinate.
+            wavelength: The wavelength of the ray.
+
+        Returns:
+            The z-coordinate of the intercept point.
+        """
+        optic.trace_generic(Hx, Hy, Px, Py, wavelength)
+        intercept = optic.surface_group.z[surface_number, 0]
+        decenter = optic.surface_group.surfaces[surface_number].geometry.cs.z
+        
+        # For some reason decenter can sometimes be a single-element array.
+        # In that case, retreive the float inside.
+        # This is a workaround until a solution is found.
+        if type(decenter) == np.ndarray:
+            decenter = decenter.item()
+
+        return intercept - decenter
+    
     @staticmethod
     def L(optic, surface_number, Hx, Hy, Px, Py, wavelength):
         """

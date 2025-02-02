@@ -10,6 +10,7 @@ import numpy as np
 import optiland.backend as be
 from optiland.rays import RealRays
 from optiland.jones import JonesFresnel
+from optiland.materials import BaseMaterial
 
 
 class BaseCoating(ABC):
@@ -94,7 +95,7 @@ class BaseCoating(ABC):
         """
         pass  # pragma: no cover
 
-    def to_dict(self):
+    def to_dict(self):  # pragma: no cover
         """
         Converts the coating to a dictionary.
 
@@ -253,6 +254,32 @@ class BaseCoatingPolarized(BaseCoating, ABC):
         rays.update(jones)
         return rays
 
+    def to_dict(self):  # pragma: no cover
+        """
+        Converts the coating to a dictionary.
+
+        Returns:
+            dict: The dictionary representation of the coating.
+        """
+        return {
+            'type': self.__class__.__name__,
+            'material_pre': self.material_pre.to_dict(),
+            'material_post': self.material_post.to_dict()
+        }
+
+    @classmethod
+    def from_dict(cls, data):  # pragma: no cover
+        """
+        Creates a coating from a dictionary.
+
+        Args:
+            data (dict): The dictionary representation of the coating.
+
+        Returns:
+            BaseCoating: The coating created from the dictionary.
+        """
+        return cls(data['material_pre'], data['material_post'])
+
 
 class FresnelCoating(BaseCoatingPolarized):
     """
@@ -285,8 +312,8 @@ class FresnelCoating(BaseCoatingPolarized):
         """
         return {
             'type': self.__class__.__name__,
-            'material_pre': self.material_pre,
-            'material_post': self.material_post
+            'material_pre': self.material_pre.to_dict(),
+            'material_post': self.material_post.to_dict()
         }
 
     @classmethod
@@ -300,4 +327,5 @@ class FresnelCoating(BaseCoatingPolarized):
         Returns:
             BaseCoating: The coating created from the dictionary.
         """
-        return cls(data['material_pre'], data['material_post'])
+        return cls(BaseMaterial.from_dict(data['material_pre']),
+                   BaseMaterial.from_dict(data['material_post']))

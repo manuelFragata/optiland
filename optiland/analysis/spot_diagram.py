@@ -7,6 +7,8 @@ Kramer Harrison, 2024
 import matplotlib.pyplot as plt
 import optiland.backend as be
 
+plt.rcParams.update({'font.size': 12, 'font.family': 'cambria'})
+
 
 class SpotDiagram:
     """Spot diagram class
@@ -113,7 +115,6 @@ class SpotDiagram:
             fig.delaxes(axs[k])
 
         plt.legend(bbox_to_anchor=(1.05, 0.5), loc='center left')
-
         plt.tight_layout()
         plt.show()
 
@@ -248,6 +249,7 @@ class SpotDiagram:
             ax.set_xlim((-axis_lim*buffer, axis_lim*buffer))
             ax.set_ylim((-axis_lim*buffer, axis_lim*buffer))
         ax.set_title(f'Hx: {field[0]:.3f}, Hy: {field[1]:.3f}')
+        ax.grid(alpha=0.25)
 
     def _prepare_data(self, data):
         """Prepare the data for visualization."""

@@ -47,7 +47,8 @@ class Optic:
             the optical system.
     """
 
-    def __init__(self):
+    def __init__(self, name: str = None):
+        self.name = name
         self.aperture = None
         self.field_type = None
 
@@ -295,7 +296,8 @@ class Optic:
                 surface.aperture.scale(scale_factor)
 
     def draw(self, fields='all', wavelengths='primary', num_rays=3,
-             figsize=(10, 4), xlim=None, ylim=None):
+             distribution='line_y', figsize=(10, 4), xlim=None, ylim=None,
+             title=None, reference=None):
         """
         Draw a 2D representation of the optical system.
 
@@ -306,19 +308,25 @@ class Optic:
                 displayed. Defaults to 'primary'.
             num_rays (int, optional): The number of rays to be traced for each
                 field and wavelength. Defaults to 3.
+            distribution (str, optional): The distribution of the rays.
+                Defaults to 'line_y'.
             figsize (tuple, optional): The size of the figure. Defaults to
                 (10, 4).
             xlim (tuple, optional): The x-axis limits of the plot. Defaults to
                 None.
             ylim (tuple, optional): The y-axis limits of the plot. Defaults to
                 None.
+            reference (str, optional): The reference rays to plot. Options
+                include "chief" and "marginal". Defaults to None.
         """
         viewer = OpticViewer(self)
-        viewer.view(fields, wavelengths, num_rays, distribution='line_y',
-                    figsize=figsize, xlim=xlim, ylim=ylim)
+        viewer.view(fields, wavelengths, num_rays, distribution=distribution,
+                    figsize=figsize, xlim=xlim, ylim=ylim, title=title,
+                    reference=reference)
 
     def draw3D(self, fields='all', wavelengths='primary', num_rays=24,
-               figsize=(1200, 800), dark_mode=False):
+               distribution='ring', figsize=(1200, 800), dark_mode=False,
+               reference=None):
         """
         Draw a 3D representation of the optical system.
 
@@ -329,14 +337,19 @@ class Optic:
                 displayed. Defaults to 'primary'.
             num_rays (int, optional): The number of rays to be traced for each
                 field and wavelength. Defaults to 2.
+            distribution (str, optional): The distribution of the rays.
+                Defaults to 'ring'.
             figsize (tuple, optional): The size of the figure. Defaults to
                 (1200, 800).
             dark_mode (bool, optional): Whether to use dark mode. Defaults to
                 False.
+            reference (str, optional): The reference rays to plot. Options
+                include "chief" and "marginal". Defaults to None.
         """
         viewer = OpticViewer3D(self)
         viewer.view(fields, wavelengths, num_rays,
-                    distribution='ring', figsize=figsize, dark_mode=dark_mode)
+                    distribution=distribution, figsize=figsize,
+                    dark_mode=dark_mode, reference=reference)
 
     def info(self):
         """Display the optical system information."""
@@ -393,13 +406,26 @@ class Optic:
         yb = be.abs(be.ravel(yb))
         for k, surface in enumerate(self.surface_group.surfaces):
             surface.set_semi_aperture(r_max=ya[k]+yb[k])
+            self.update_normalization(surface)
 
-    def update(self):
+    def update_normalization(self, surface) -> None:
+        """
+        Update the normalization radius of non-spherical surfaces.
+        """
+        if surface.surface_type in ['even_asphere', 'odd_asphere',
+                                    'polynomial', 'chebyshev']:
+            surface.geometry.norm_x = surface.semi_aperture*1.1
+            surface.geometry.norm_y = surface.semi_aperture*1.1
+        if surface.surface_type == 'zernike':
+            surface.geometry.norm_radius = surface.semi_aperture*1.1
+
+    def update(self)->None:
         """
         Update the surfaces based on the pickup operations.
         """
         self.pickups.apply()
         self.solves.apply()
+        self.update_paraxial()
 
     def image_solve(self):
         """Update the image position such that the marginal ray crosses the
