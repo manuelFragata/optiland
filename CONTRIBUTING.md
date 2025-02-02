@@ -21,6 +21,18 @@ Thank you for your interest in contributing to **Optiland**! Contributions are w
 - Add tests for new features and bug fixes.
 - Ensure all tests pass before submitting a pull request.
 
-## Reporting Issues
+## Submitting an Issue
 
-If you encounter any bugs or issues, feel free to report them on our [GitHub issue tracker](https://github.com/HarrisonKramer/optiland/issues). Please include detailed steps to reproduce the issue.
+If you encounter any bugs or issues, feel free to report them on our [GitHub issue tracker](https://github.com/HarrisonKramer/optiland/issues). To help us address your issue efficiently, please follow these guidelines when submitting a new issue.
+
+### Before opening a new issue, please:
+- Check **existing issues** to avoid duplicates.  
+- If reporting a bug, confirm that you are using the latest version of Optiland.  
+- If requesting a feature, consider explaining how it benefits the project.  
+
+### Additional Notes
+- If you’re submitting a bug report, consider adding a minimal reproducible example.
+- If you're unsure where your issue fits, feel free to ask!
+- Please be respectful and constructive when discussing issues.
+
+We appreciate your contributions and look forward to collaborating!
