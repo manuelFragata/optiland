@@ -8,6 +8,10 @@ and through various fields of view.
 
 Kramer Harrison, 2024
 """
+
+# import matplotlib
+# matplotlib.use('Agg')
+
 import os
 import numpy as np
 import pandas as pd
@@ -18,6 +22,83 @@ from optiland.visualization.rays import Rays2D, Rays3D
 from optiland.visualization.system import OpticalSystem
 
 plt.rcParams.update({'font.size': 12, 'font.family': 'cambria'})
+
+
+class OptimizationViewer:
+    def __init__(self, optic, dark_mode: bool = False, title=None):
+        self.optic = optic
+        self.title = title
+        self.rays = Rays2D(optic)
+        self.system = OpticalSystem(optic, self.rays, projection='2d')
+
+        # VTK Renderer Setup
+        self.renderer = vtk.vtkRenderer()
+        self.render_window = vtk.vtkRenderWindow()
+        self.render_window.AddRenderer(self.renderer)
+        self.render_window.SetSize(1200, 800)
+
+        # Image actor to display the Matplotlib figure
+        self.image_actor = vtk.vtkImageActor()
+        self.renderer.AddActor(self.image_actor)
+
+        # Create the Matplotlib Figure
+        self.fig, self.ax = plt.subplots(figsize=(15, 15))
+        self.fig.suptitle(self.title)
+
+        if dark_mode:
+            self.renderer.SetBackground(0.13, 0.15, 0.19)
+            self.renderer.SetBackground2(0.195, 0.21, 0.24)
+        else:
+            self.renderer.SetBackground(0.8, 0.9, 1.0)
+            self.renderer.SetBackground2(0.4, 0.5, 0.6)
+
+    def view(self, fields='all', wavelengths='primary', num_rays=3,
+             distribution='line_y', xlim=None, ylim=None,
+             reference=None):
+        # Update Matplotlib figure
+        # self.fig.clf()  # Clear the figure canvas
+        self.ax.clear() # Clear the axes
+        self.ax.set_title("Optimization Progress")
+        self.rays.plot(
+            self.ax, 
+            fields=fields, 
+            wavelengths=wavelengths, 
+            num_rays=num_rays, 
+            distribution=distribution, 
+            reference=reference
+        )
+        self.system.plot(self.ax)
+
+        if xlim:
+            self.ax.set_xlim(xlim)
+        if ylim:
+            self.ax.set_ylim(ylim)
+
+        # Draw the figure and retrieve the image as a numpy array
+        self.fig.canvas.draw()
+        width, height = self.fig.canvas.get_width_height()
+        buf = np.frombuffer(self.fig.canvas.tostring_rgb(), dtype=np.uint8)
+        buf = buf.reshape((height, width, 3))
+
+        # Convert the numpy array to a VTK image
+        vtk_image = vtk.vtkImageData()
+        vtk_image.SetDimensions(width, height, 1)
+        vtk_image.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 3)
+
+        for y in range(height):
+            for x in range(width):
+                r, g, b = buf[y, x]
+                # Flip y to match VTK's orientation
+                vtk_image.SetScalarComponentFromDouble(x, height - y - 1, 0, 0, r)
+                vtk_image.SetScalarComponentFromDouble(x, height - y - 1, 0, 1, g)
+                vtk_image.SetScalarComponentFromDouble(x, height - y - 1, 0, 2, b)
+
+        # Update actor
+        self.image_actor.SetInputData(vtk_image)
+
+        # Update camera and render
+        self.renderer.ResetCamera()
+        self.render_window.Render()
 
 
 class OpticViewer:

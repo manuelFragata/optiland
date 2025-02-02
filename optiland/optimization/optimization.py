@@ -13,7 +13,7 @@ import pandas as pd
 from scipy import optimize
 from optiland.optimization.variable import VariableManager
 from optiland.optimization.operand import OperandManager
-
+from optiland.visualization import OptimizationViewer
 
 class OptimizationProblem:
     """
@@ -168,7 +168,8 @@ class OptimizerGeneric:
         if self.problem.initial_value == 0.0:
             self.problem.initial_value = self.problem.sum_squared()
 
-    def optimize(self, method=None, maxiter=1000, disp=True, tol=1e-3):
+    def optimize(self, method=None, maxiter=1000, disp=True, 
+                 tol=1e-3, plot=False, dark_mode=False):
         """
         Optimize the problem using the specified parameters.
 
@@ -189,9 +190,14 @@ class OptimizerGeneric:
         x0 = [var.value for var in self.problem.variables]
         self._x.append(x0)
         bounds = tuple([var.bounds for var in self.problem.variables])
-
         options = {'maxiter': maxiter, 'disp': disp}
 
+        if plot:
+            viewer = OptimizationViewer(self.problem.variables[0].optic, 
+                                        dark_mode=dark_mode)
+        else:
+            viewer = None
+        
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             result = optimize.minimize(self._fun,
@@ -199,7 +205,9 @@ class OptimizerGeneric:
                                        method=method,
                                        bounds=bounds,
                                        options=options,
-                                       tol=tol)
+                                       tol=tol,
+                                       args=(plot, viewer),
+                                       )
         return result
 
     def undo(self):
@@ -212,12 +220,18 @@ class OptimizerGeneric:
                 var.update(x0[idvar])
             self._x.pop(-1)
 
-    def _fun(self, x)->float:
+    def _fun(self,
+             x,
+             plot: bool = False,
+             viewer: OptimizationViewer = None,
+        )->float:
         """
         Internal function to evaluate the objective function.
 
         Args:
             x (array-like): The values of the variables.
+            plot (bool): Display a live plot of the lens during optimization.
+            viewer (bool): Display a live plot of the lens during optimization.
 
         Returns:
             rss (float): The residual sum of squares.
@@ -233,9 +247,12 @@ class OptimizerGeneric:
         # Compute merit function value
         try:   
             rss = self.problem.sum_squared()
+
             if np.isnan(rss):
                 return 1e10
             else:
+                if plot and viewer is not None:
+                    viewer.view()
                 return rss
         except ValueError:
             return 1e10
