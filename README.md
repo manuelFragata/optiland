@@ -147,9 +147,6 @@ This guide gives a step-by-step approach to learning how to use Optiland.
     - [Tutorial 6b - Introduction to Polarization](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_6b_Introduction_to_Polarization.ipynb)
         - Basics of polarization in Optiland
         - Analyzing polarization performance
-    - Tutorial 6c - Advanced Polarization - Update in progress (target completion: Jan. 2025)
-        - Waveplates, polarizers, and the Jones matrix
-        - Jones pupils
 7. **Advanced Optical Design**
     - [Tutorial 7a - Lithographic Projection System](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_7a_Lithographic_Projection_System.ipynb)
         - Optimizing and Analyzing a Complex Lithography System
@@ -157,6 +154,8 @@ This guide gives a step-by-step approach to learning how to use Optiland.
         - Lambertian and Gaussian scatter models
     - [Tutorial 7c - Freeform Surfaces](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_7c_Freeform_Surfaces.ipynb)
         - Designing non-standard optical systems with freeform surfaces
+    - [Tutorial 7d - Three Mirror Anastigmat](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_7d_Three_Mirror_Anastigmat.ipynb)
+        - Off-axis reflective telescope with freeform surfaces
 8. **Tolerancing**
     - [Tutorial 8a - Introduction to Tolerancing](https://github.com/HarrisonKramer/optiland/blob/master/docs/examples/Tutorial_8a_Tolerancing_Sensitivity_Analysis.ipynb)
         - Sensitivity studies
@@ -200,7 +199,7 @@ Optiland is continually evolving to provide new functionalities for optical desi
 - [ ] **Diffractive Optical Elements**
 - [ ] **Jones Pupils**
 - [ ] **Apodization Support** 
-- [ ] **Additional Freeforms (Superconic, Zernike, etc.)**
+- [ ] **Additional Freeforms (Superconic, etc.)**
 - [ ] **Image Simulation**
 - [ ] **Huygens PSF & MTF**
 - [ ] **Interferogram Analysis**
